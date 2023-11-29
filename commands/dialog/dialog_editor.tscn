@@ -75,19 +75,23 @@ layout_mode = 2
 
 [node name="Bold" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Bold"
 theme_override_constants/icon_max_width = 0
 icon = ExtResource("3_sscjh")
 
 [node name="Italics" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Italics"
 icon = ExtResource("4_mdvss")
 
 [node name="Underline" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Underline"
 icon = ExtResource("5_u3vta")
 
 [node name="Strikethrough" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Strikethrough"
 icon = ExtResource("6_240wf")
 
 [node name="VSeparator" type="VSeparator" parent="VBoxContainer/ButtonBar"]
@@ -95,18 +99,22 @@ layout_mode = 2
 
 [node name="Left" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Left"
 icon = ExtResource("7_aob6y")
 
 [node name="Center" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Center"
 icon = ExtResource("8_vtvpy")
 
 [node name="Right" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Right"
 icon = ExtResource("9_3oylr")
 
 [node name="Fill" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Fill"
 icon = ExtResource("10_u4f8d")
 
 [node name="VSeparator6" type="VSeparator" parent="VBoxContainer/ButtonBar"]
@@ -114,22 +122,27 @@ layout_mode = 2
 
 [node name="Wave" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Wave"
 icon = ExtResource("11_drj4w")
 
 [node name="Tornado" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Tornado"
 icon = ExtResource("12_8a8ll")
 
 [node name="Shake" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Shake"
 icon = ExtResource("13_mvwrk")
 
 [node name="Fade" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Fade"
 icon = ExtResource("14_nm1y5")
 
 [node name="Rainbow" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Rainbow"
 icon = ExtResource("15_dxa0j")
 
 [node name="VSeparator2" type="VSeparator" parent="VBoxContainer/ButtonBar"]
@@ -137,20 +150,17 @@ layout_mode = 2
 
 [node name="color" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Text Color"
 icon = ExtResource("11_4ugyi")
-
-[node name="VSeparator3" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
 
 [node name="bgcolor" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Background Color"
 icon = ExtResource("12_nns4w")
-
-[node name="VSeparator4" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
 
 [node name="fgcolor" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
+tooltip_text = "Foreground Color"
 icon = ExtResource("13_uli47")
 
 [node name="VSeparator5" type="VSeparator" parent="VBoxContainer/ButtonBar"]
