@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://ctilnyafp01uw"]
+[gd_scene load_steps=20 format=3 uid="uid://ctilnyafp01uw"]
 
 [ext_resource type="Script" path="res://addons/textalog/commands/dialog/dialog_editor.gd" id="1_jdxpf"]
 [ext_resource type="PackedScene" uid="uid://drtv4tdo7e08i" path="res://addons/textalog/scenes/dialog_box.tscn" id="2_qc1nv"]
@@ -11,8 +11,13 @@
 [ext_resource type="Texture2D" uid="uid://3gmn87twk4xj" path="res://addons/textalog/commands/icons/text-align-right.svg" id="9_3oylr"]
 [ext_resource type="Texture2D" uid="uid://drxagtsnqq3t8" path="res://addons/textalog/commands/icons/text-align-justify.svg" id="10_u4f8d"]
 [ext_resource type="Texture2D" uid="uid://bj5dr34k6yqg0" path="res://addons/textalog/commands/icons/text.svg" id="11_4ugyi"]
+[ext_resource type="Texture2D" uid="uid://b2hacn41hus0s" path="res://addons/textalog/commands/icons/wave.svg" id="11_drj4w"]
+[ext_resource type="Texture2D" uid="uid://de2w00qajqghi" path="res://addons/textalog/commands/icons/tornado.svg" id="12_8a8ll"]
 [ext_resource type="Texture2D" uid="uid://d0reisfa8iyh3" path="res://addons/textalog/commands/icons/edit-pencil-line-01.svg" id="12_nns4w"]
+[ext_resource type="Texture2D" uid="uid://bmc80xl7u5ogv" path="res://addons/textalog/commands/icons/shake-text.svg" id="13_mvwrk"]
 [ext_resource type="Texture2D" uid="uid://cverj5su8dwjw" path="res://addons/textalog/commands/icons/bucket.svg" id="13_uli47"]
+[ext_resource type="Texture2D" uid="uid://1n2qab0bsww4" path="res://addons/textalog/commands/icons/fade.svg" id="14_nm1y5"]
+[ext_resource type="Texture2D" uid="uid://c71514cgg6mqs" path="res://addons/textalog/commands/icons/rainbow.svg" id="15_dxa0j"]
 
 [sub_resource type="CodeHighlighter" id="CodeHighlighter_lcghf"]
 number_color = Color(0.878431, 0.878431, 0.878431, 1)
@@ -109,28 +114,23 @@ layout_mode = 2
 
 [node name="Wave" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
-text = "Wave"
-expand_icon = true
+icon = ExtResource("11_drj4w")
 
 [node name="Tornado" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
-text = "Tornado"
-expand_icon = true
+icon = ExtResource("12_8a8ll")
 
 [node name="Shake" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
-text = "Shake"
-expand_icon = true
+icon = ExtResource("13_mvwrk")
 
 [node name="Fade" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
-text = "Fade"
-expand_icon = true
+icon = ExtResource("14_nm1y5")
 
 [node name="Rainbow" type="Button" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
-text = "Rainbow"
-expand_icon = true
+icon = ExtResource("15_dxa0j")
 
 [node name="VSeparator2" type="VSeparator" parent="VBoxContainer/ButtonBar"]
 layout_mode = 2
@@ -171,10 +171,10 @@ initial_position = 1
 size = Vector2i(306, 625)
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog"]
-offset_left = 16.0
-offset_top = 12.0
-offset_right = 302.0
-offset_bottom = 580.0
+offset_left = 32.0
+offset_top = 20.0
+offset_right = 310.0
+offset_bottom = 588.0
 
 [connection signal="pressed" from="DialogBar/PlayButton" to="." method="_on_play_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/Bold" to="." method="insert_tag" binds= ["b"]]
