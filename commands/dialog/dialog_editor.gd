@@ -23,7 +23,7 @@ func _on_text_edit_text_changed():
 	dialog_box.dialog_label.visible_characters = -1
 
 
-func insert_tag(tag: String, options: Variant =null, overwrite_tag = true):
+func insert_tag(tag: String, options: Variant =null, overwrite_tag = false):
 	text_edit.begin_complex_operation()
 	for i in text_edit.get_caret_count():
 		var text = text_edit.get_selected_text(i)
@@ -31,7 +31,7 @@ func insert_tag(tag: String, options: Variant =null, overwrite_tag = true):
 		var column_from = text_edit.get_selection_from_column(i)
 		var line_to = text_edit.get_selection_to_line(i)
 		var column_to = text_edit.get_selection_to_column(i)
-		if overwrite_tag and text.begins_with("[" + tag) and text.ends_with("[/" + tag + "]"):
+		if text.begins_with("[" + tag) and text.ends_with("[/" + tag + "]"):
 			var found_l = text.substr(0, text.find("]")+1)
 			var found_r = "[/" + tag + "]"
 			var untag_to = text.length()-found_l.length()-found_r.length()
@@ -42,7 +42,7 @@ func insert_tag(tag: String, options: Variant =null, overwrite_tag = true):
 			var line = text_edit.get_caret_line(i)
 			var column = text_edit.get_caret_column(i)
 			text_edit.select(line_from, column_from, line, column, i)
-			if not options:
+			if not overwrite_tag:
 				continue
 			text = text_edit.get_selected_text(i)
 			line_from = text_edit.get_selection_from_line(i)
@@ -74,7 +74,7 @@ func insert_tag(tag: String, options: Variant =null, overwrite_tag = true):
 
 
 func insert_color(tag: String, color: Color):
-	insert_tag(tag, "#" + color.to_html())
+	insert_tag(tag, "#" + color.to_html(), true)
 
 
 func _on_play_button_pressed():

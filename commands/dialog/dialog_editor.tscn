@@ -198,7 +198,10 @@ offset_bottom = 588.0
 [connection signal="pressed" from="VBoxContainer/ButtonBar/Wave" to="." method="insert_tag" binds= ["wave"]]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/Tornado" to="." method="insert_tag" binds= ["tornado"]]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/Shake" to="." method="insert_tag" binds= ["shake"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Fade" to="." method="insert_tag" binds= ["fade"]]
+[connection signal="pressed" from="VBoxContainer/ButtonBar/Fade" to="." method="insert_tag" binds= ["fade", {
+"length": "99",
+"start": "1"
+}]]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/Rainbow" to="." method="insert_tag" binds= ["rainbow"]]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/color" to="." method="_on_text_color_pressed"]
 [connection signal="pressed" from="VBoxContainer/ButtonBar/bgcolor" to="." method="_on_background_color_pressed"]
