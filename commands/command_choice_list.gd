@@ -3,6 +3,9 @@ extends Command
 
 var choice_picked
 
+const ChoiceClass = preload("res://addons/textalog/commands/command_choice.gd")
+var generate_default_choices:bool = true
+
 func _execution_steps() -> void:
 	command_started.emit()
 	for command in collection:
@@ -28,3 +31,15 @@ func _can_hold_commands() -> bool: return true
 
 func can_hold(command) -> bool:
 	return command.command_name == &"Choice"
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_UPDATE_STRUCTURE:
+		if generate_default_choices:
+			var branches = [ChoiceClass, ChoiceClass]
+			for command in collection:
+				if command.get_script() in branches:
+					branches.erase(command.get_script())
+			for branch in branches:
+				collection.append(branch.new())
+			
+			generate_default_choices = false
