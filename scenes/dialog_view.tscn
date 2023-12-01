@@ -157,13 +157,10 @@ script = ExtResource("7_f3kym")
 dialog_view = NodePath("../..")
 
 [node name="DialogBox" parent="HUD/MainView" instance=ExtResource("7_cgswg")]
+layout_mode = 1
 
 [node name="ChoiceList" parent="HUD/MainView" instance=ExtResource("8_1euk0")]
 layout_mode = 1
-offset_left = 876.0
-offset_top = 179.0
-offset_right = 1248.0
-offset_bottom = 543.0
 
 [node name="EvidenceMenu" parent="HUD" instance=ExtResource("18_d4oiw")]
 mouse_filter = 2

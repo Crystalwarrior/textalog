@@ -35,6 +35,7 @@ var flags = {}:
 
 signal wait_for_input(tog)
 signal flags_modified(flags)
+signal choice_selected(index)
 
 signal dialog_finished
 
@@ -238,6 +239,14 @@ func set_flag(flag: String, val: Variant):
 	flags_modified.emit(flags)
 
 
+func add_choice(title, disabled = false):
+	choice_list.add_choice(title, disabled)
+
+
+func clear_choices():
+	choice_list.clear_choices()
+
+
 func get_savedict() -> Dictionary:
 	var save_dict = {
 		"timeline": command_manager.current_collection.get_path(),
@@ -367,7 +376,6 @@ func _on_object_clicked(obj, target_timeline: CommandCollection):
 	obj.checked = true
 
 
-func _on_choice_list_choice_selected(title, timeline_path, index):
-	print(title)
+func _on_choice_list_choice_selected(index):
+	choice_selected.emit(index)
 	last_picked_choice = index
-	command_manager.go_to_command_in_collection(0, load(timeline_path))

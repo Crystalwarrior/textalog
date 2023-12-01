@@ -27,7 +27,7 @@ func add_evidence(evidence_dict):
 	new_evidence.select.connect(select_evidence.bind(new_evidence.get_index()))
 
 
-func deselect_evidence():
+func deselect():
 	for child in evidence_container.get_children():
 		child.set_selected(false)
 	selected_evidence.emit(-1)
@@ -35,7 +35,7 @@ func deselect_evidence():
 
 func select_evidence(index):
 	if index < 0:
-		deselect_evidence()
+		deselect()
 		return
 	var selected = evidence_container.get_child(index)
 	if not selected:

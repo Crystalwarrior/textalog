@@ -43,6 +43,12 @@ extends Command
 		emit_changed()
 	get:
 		return flip_duration
+@export var shaking:bool = false:
+	set(value):
+		shaking = value
+		emit_changed()
+	get:
+		return shaking
 @export var set_z_index:int = 0:
 	set(value):
 		set_z_index = value
@@ -69,6 +75,10 @@ func _execution_steps() -> void:
 
 	if emote != "":
 		target.set_emote(emote)
+	if shaking:
+		target.start_shaking()
+	else:
+		target.stop_shaking()
 	target.z_index = set_z_index
 	target.flip_h(flipped, flip_duration)
 	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
@@ -108,6 +118,8 @@ func _get_hint() -> String:
 		hint_str += " over " + String.num(zoom_duration, 4) + " seconds"
 	if flipped:
 		hint_str += ", flipped"
+	if shaking:
+		hint_str += ", shaking"
 	if target != NodePath():
 		hint_str += " on " + str(target)
 	if wait_until_finished and zoom_duration > 0:
