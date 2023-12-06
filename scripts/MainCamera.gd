@@ -17,12 +17,11 @@ var trauma_power = 2  # Trauma exponent. Use [2, 3].
 func _unhandled_input(event):
 	if not point_collection:
 		return
-
-	if event.is_action_pressed("ui_left"):
+	if event.is_action_pressed("previous"):
 		var idx = (current_point.get_index() - 1) % point_collection.get_children().size()
 		var point = point_collection.get_child(idx)
 		set_campoint(point)
-	if event.is_action_pressed("ui_right"):
+	if event.is_action_pressed("next"):
 		var idx = abs((current_point.get_index() + 1) % point_collection.get_children().size())
 		var point = point_collection.get_child(idx)
 		set_campoint(point)
