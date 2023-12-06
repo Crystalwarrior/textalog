@@ -88,6 +88,7 @@ func _on_evidence_scroller_selected_evidence(index):
 func _on_evidence_toggled(toggled_on):
 	notes_toggle.set_pressed_no_signal(false)
 	notes_scroller.set_visible(false)
+	evidence_toggle.set_pressed_no_signal(toggled_on)
 	evidence_scroller.set_visible(toggled_on)
 	deselect_all()
 

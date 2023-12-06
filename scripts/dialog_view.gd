@@ -28,6 +28,8 @@ var current_background: String
 
 var value: int = 0
 
+var choice_history: PackedStringArray = []
+
 var flags = {}:
 	set(val):
 		flags = val
@@ -38,6 +40,7 @@ signal flags_modified(flags)
 signal choice_selected(index)
 
 signal dialog_finished
+signal evidence_shown(index)
 
 
 func _process_testimony(event):
@@ -239,8 +242,16 @@ func set_flag(flag: String, val: Variant):
 	flags_modified.emit(flags)
 
 
+func get_flag(flag: String):
+	if flag not in flags:
+		return null
+	return flags[flag]
+
+
 func add_choice(title, disabled = false):
-	choice_list.add_choice(title, disabled)
+	var choice = choice_list.add_choice(title, disabled)
+	if choice.text in choice_history:
+		choice.modulate = Color(0.65, 0.65, 0.85)
 
 
 func clear_choices():
@@ -304,6 +315,7 @@ func _on_command_manager_timeline_started(_timeline_resource):
 
 
 func _on_command_manager_timeline_finished(_timeline_resource):
+	# TODO: don't use pause_testimony, instead use the goto/return logic
 	if testimony and pause_testimony:
 		pause_testimony = false
 		if next_statement_on_pause:
@@ -314,14 +326,17 @@ func _on_command_manager_timeline_finished(_timeline_resource):
 	finished = true
 
 
+func set_waiting_on_input(tog: bool):
+	waiting_on_input = tog
+	wait_for_input.emit(tog)
+
+
 func _on_command_manager_command_started(_command):
-	waiting_on_input = false
-	wait_for_input.emit(false)
+	set_waiting_on_input(false)
 
 
 func _on_command_manager_command_finished(_command):
-	waiting_on_input = true
-	wait_for_input.emit(true)
+	set_waiting_on_input(_command.get_script().resource_path == "res://addons/textalog/commands/command_dialog.gd")
 
 
 func _on_dialog_box_message_end():
@@ -329,16 +344,19 @@ func _on_dialog_box_message_end():
 
 
 func _on_show_evidence(index):
-	if current_present == null:
-		return
+	#pause_testimony = true
+	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
 	$HUD/EvidenceMenu/EvidenceToggle.button_pressed = false
+
 	last_shown_evidence = index
-	pause_testimony = true
-	next_statement_on_pause = false
+	evidence_shown.emit(index)
+
+	if current_present == null:
+		return
 	command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.start(current_present)
+	command_manager.go_to_command_in_collection(0, current_present)
 
 
 func _on_soul_sweep_connection_path(path):
@@ -364,7 +382,6 @@ func _on_evidence_menu_show_evidence(index):
 func _on_object_clicked(obj, target_timeline: CommandCollection):
 	if not obj or obj.is_queued_for_deletion():
 		return
-	print(obj, " - ", target_timeline)
 	if not target_timeline:
 		return
 	command_manager.start(target_timeline)
@@ -377,5 +394,6 @@ func _on_object_clicked(obj, target_timeline: CommandCollection):
 
 
 func _on_choice_list_choice_selected(index):
+	choice_history.append(choice_list.get_choice_by_index(index).text)
 	choice_selected.emit(index)
 	last_picked_choice = index

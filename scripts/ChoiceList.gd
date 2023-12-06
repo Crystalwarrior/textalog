@@ -27,6 +27,7 @@ func add_choice(title, disabled = false):
 	button.disabled = disabled
 	button.pressed.connect(_on_option_pressed.bind(button))
 	container.add_child(button)
+	return button
 
 func remove_choice(index):
 	var button = get_choice_by_index(index)
