@@ -10,7 +10,9 @@ func _ready():
 	for child in object_list.get_children():
 		child.clicked.connect(on_object_clicked)
 		child.hovered.connect(on_object_hovered)
-	$Camera2D.make_current()
+	var camera = get_node_or_null("Camera2D")
+	if camera:
+		camera.make_current()
 
 
 func on_object_hovered(obj, toggle):
