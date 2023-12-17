@@ -3,7 +3,7 @@ extends Node
 @onready var dialogbox = $HUD/MainView/DialogBox
 @onready var command_manager: CommandProcessor = $CommandManager
 @onready var testimony_indicator = $HUD/MainView/DialogBox/TestimonyIndicator
-@onready var characters = $Characters
+@onready var characters_node = $Characters
 @onready var backgrounds = $Background
 @onready var canvas_modulate = $CanvasModulate
 @onready var choice_list = $HUD/MainView/ChoiceList
@@ -109,18 +109,24 @@ func add_character(res_path, starter_pos: Vector2 = Vector2(0, 0), flipped: bool
 		push_error("add_character: 'res_path' not String or PackedScene")
 		return null
 	chara.add_to_group("save")
-	var found = characters.get_node_or_null(NodePath(chara.name))
+	chara.add_to_group("characters")
+	var found = characters_node.get_node_or_null(NodePath(chara.name))
 	if found:
 		found.free()
-	characters.add_child(chara)
+	characters_node.add_child(chara)
 	chara.position = starter_pos
 	if flipped:
 		chara.flip_h(0)
 	return chara
 
 
+func get_characters():
+	return get_tree().get_nodes_in_group("characters")
+
+
 func get_character(charname):
-	for chara in characters.get_children():
+	var characters = get_characters()
+	for chara in characters:
 		if chara.name.to_lower() == charname.to_lower():
 			return chara
 	return null

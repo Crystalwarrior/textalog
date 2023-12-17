@@ -65,7 +65,7 @@ func _execution_steps() -> void:
 		if speaker:
 			if bump_speaker:
 				speaker.bump()
-			for chara in target_node.characters.get_children():
+			for chara in target_node.get_characters():
 				if not highlight_speaker or chara == speaker:
 					chara.blackout(false, 0.25)
 				else:

@@ -134,7 +134,7 @@ func select_note(note):
 	if note <= -1:
 		return
 	notes_toggle.set_pressed(true)
-	notes_scroller.select_note(note)
+	notes_scroller.select_evidence(note)
 
 
 func _on_note_scroller_selected_note(index):
