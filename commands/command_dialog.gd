@@ -49,12 +49,6 @@ extends Command
 		emit_changed()
 	get:
 		return highlight_speaker
-@export var set_z_index:int = 0:
-	set(value):
-		set_z_index = value
-		emit_changed()
-	get:
-		return set_z_index
 
 func _execution_steps() -> void:
 	command_started.emit()
@@ -70,7 +64,6 @@ func _execution_steps() -> void:
 					chara.blackout(false, 0.25)
 				else:
 					chara.blackout(true, 0.25)
-			speaker.z_index = set_z_index
 			speaker.start_talking()
 			if target_node.is_connected("dialog_finished", speaker.stop_talking):
 				target_node.dialog_finished.disconnect(speaker.stop_talking)

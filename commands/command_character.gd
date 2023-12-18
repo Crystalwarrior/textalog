@@ -13,6 +13,13 @@ extends Command
 		emit_changed()
 	get:
 		return emote
+@export var delete: bool = false:
+	set(value):
+		delete = value
+		emit_changed()
+	get:
+		return delete
+@export_category("Positioning")
 @export var add_position: bool = true:
 	set(value):
 		add_position = value
@@ -25,6 +32,7 @@ extends Command
 		emit_changed()
 	get:
 		return to_position
+@export_category("Animation")
 @export var zoom_duration: float = 0:
 	set(value):
 		zoom_duration = value
@@ -61,6 +69,18 @@ extends Command
 		emit_changed()
 	get:
 		return wait_until_finished
+@export var fade_out:bool = false:
+	set(value):
+		fade_out = value
+		emit_changed()
+	get:
+		return fade_out
+@export var fade_duration: float = 0.0:
+	set(value):
+		fade_duration = value
+		emit_changed()
+	get:
+		return fade_duration
 
 
 func _execution_steps() -> void:
@@ -68,8 +88,7 @@ func _execution_steps() -> void:
 
 	var target = target_node
 	if character:
-		var charname = character.resource_path.get_file().trim_suffix(".tscn")
-		target = target_node.get_character(charname)
+		target = get_character()
 		if not target:
 			target = target_node.add_character(character, to_position, flipped)
 
@@ -79,26 +98,41 @@ func _execution_steps() -> void:
 		target.start_shaking()
 	else:
 		target.stop_shaking()
+	if fade_out:
+		target.fadeout(fade_duration)
+	else:
+		target.fadein(fade_duration)
 	target.z_index = set_z_index
 	target.flip_h(flipped, flip_duration)
 	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
 	if wait_until_finished and zoom_duration > 0:
-		if target.is_connected("tween_finished", tween_finished):
-			target.tween_finished.disconnect(tween_finished)
+		if target.is_connected("tween_finished", character_finished):
+			target.tween_finished.disconnect(character_finished)
 		target.tween_finished.connect(
-			tween_finished,
+			character_finished,
 			CONNECT_ONE_SHOT
 			)
 	else:
 		command_finished.emit()
 
 
-func tween_finished():
+func get_character():
+	if not character:
+		return null
+	var charname = character.get_state().get_node_name(0)
+	return target_node.get_character(charname)
+
+
+func character_finished():
+	var target = get_character()
+	if delete and target:
+		get_character().queue_free()
 	command_finished.emit()
 
 
 func _get_name() -> StringName:
-	return "Character"
+	var state = character.get_state()
+	return state.get_node_name(0) if character else "Character"
 
 
 func _get_hint() -> String:
@@ -120,6 +154,13 @@ func _get_hint() -> String:
 		hint_str += ", flipped"
 	if shaking:
 		hint_str += ", shaking"
+	if fade_duration != 0:
+		hint_str += ", fading "
+		if fade_out:
+			hint_str += "out "
+		else:
+			hint_str += "in "
+		hint_str += "over " + String.num(fade_duration, 4) + " seconds"
 	if target != NodePath():
 		hint_str += " on " + str(target)
 	if wait_until_finished and zoom_duration > 0:

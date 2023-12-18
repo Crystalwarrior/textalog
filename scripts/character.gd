@@ -1,8 +1,8 @@
 extends Node2D
 
-@export var talk_animationplayer: AnimationPlayer
+@export var talk_animationplayer: AnimationPlayer = get_node_or_null("TalkPlayer")
+@export var emote_switcher: AnimationPlayer = get_node_or_null("EmoteSwitcher")
 
-@onready var emote_switcher: AnimationPlayer = get_node_or_null("EmoteSwitcher")
 @onready var sprite_group: CanvasGroup = $SpriteGroup
 
 var is_talking: bool = false
