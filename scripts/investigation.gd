@@ -15,6 +15,15 @@ func _ready():
 		camera.make_current()
 
 
+func _unhandled_input(event):
+	if event.is_action_pressed("highlight"):
+		for child in object_list.get_children():
+			child.outline(true)
+	elif event.is_action_released("highlight"):
+		for child in object_list.get_children():
+			child.outline(false)
+
+
 func on_object_hovered(obj, toggle):
 	var index = obj.get_index()
 	if index < current_hovered:

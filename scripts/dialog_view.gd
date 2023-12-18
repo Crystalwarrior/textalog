@@ -45,12 +45,9 @@ signal evidence_shown(index)
 
 func _process_testimony(event):
 	if event.is_action_pressed("next"):
-		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
-		if not waiting_on_input:
-			dialogbox.skip()
-		else:
-			go_to_next_statement()
+		get_window().gui_release_focus()
+		next()
 	elif event.is_action_pressed("previous"):
 		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
@@ -66,15 +63,21 @@ func _process_testimony(event):
 
 func _process_timeline(event):
 	if event.is_action_pressed("next"):
-		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
-		if not waiting_on_input:
-			dialogbox.skip()
-		elif not finished:
-			if not command_manager.main_collection:
-				command_manager.start()
-			else:
-				command_manager.go_to_next_command()
+		next()
+
+
+func next():
+	get_window().gui_release_focus()
+	if not waiting_on_input:
+		dialogbox.skip()
+	elif not pause_testimony and not testimony.is_empty():
+		go_to_next_statement()
+	elif not finished:
+		if not command_manager.main_collection:
+			command_manager.start()
+		else:
+			command_manager.go_to_next_command()
 
 
 func canvas_fade(to_color: Color = Color.WHITE, duration: float = 1.0):

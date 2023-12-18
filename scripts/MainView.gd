@@ -9,6 +9,13 @@ func _gui_input(event):
 		dialog_view._process_testimony(event)
 
 
+func _process(_delta):
+	if Input.is_action_pressed("skip"):
+		Engine.time_scale = 3.0
+		dialog_view.next()
+	elif Input.is_action_just_released("skip"):
+		Engine.time_scale = 1.0
+
 func fade(speed: float = 1.0, block_mouse: bool = false):
 	$DialogBox/AnimationPlayer.play("fade", -1, speed, speed < 0)
 	mouse_filter = Control.MOUSE_FILTER_STOP if block_mouse else Control.MOUSE_FILTER_IGNORE
