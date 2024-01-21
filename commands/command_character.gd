@@ -131,8 +131,7 @@ func character_finished():
 
 
 func _get_name() -> StringName:
-	var state = character.get_state()
-	return state.get_node_name(0) if character else "Character"
+	return character.get_state().get_node_name(0) if character else "Character"
 
 
 func _get_hint() -> String:

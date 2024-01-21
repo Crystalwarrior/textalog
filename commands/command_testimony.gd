@@ -1,9 +1,16 @@
 @tool
 extends Command
 
+@export var title: String = "":
+	set(value):
+		title = value
+		emit_changed()
+	get:
+		return title
+
 var choice_picked
 
-const ChoiceClass = preload("res://addons/textalog/commands/command_choice.gd")
+const StatementClass = preload("res://addons/textalog/commands/command_testimony_statement.gd")
 var generate_default_choices:bool = true
 
 func _execution_steps() -> void:
@@ -22,10 +29,13 @@ func choice_selected(index):
 	choice_picked = index
 	go_to_next_command()
 
-func _get_name() -> StringName: return "Choice List"
+func _get_name() -> StringName: return "Testimony"
+
+func _get_hint() -> String:
+	return title
 
 func _get_icon() -> Texture:
-	return load("res://addons/textalog/commands/icons/picklist.svg")
+	return load("res://addons/textalog/commands/icons/testimony.svg")
 
 func _can_hold_commands() -> bool: return true
 
@@ -35,7 +45,7 @@ func can_hold(command) -> bool:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_UPDATE_STRUCTURE:
 		if generate_default_choices:
-			var branches = [ChoiceClass, ChoiceClass]
+			var branches = [StatementClass, StatementClass]
 			for command in collection:
 				if command.get_script() in branches:
 					branches.erase(command.get_script())
