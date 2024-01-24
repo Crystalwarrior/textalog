@@ -368,22 +368,6 @@ func _on_show_evidence(index):
 	command_manager.go_to_command_in_collection(0, current_present)
 
 
-func _on_soul_sweep_connection_path(path):
-	var timeline: CommandCollection
-	if ResourceLoader.exists(path):
-		timeline = load(path)
-
-	if not timeline and $HUD/SoulSweep.failsafe:
-		push_warning("SoulSweep: timeline not found, using the failsafe timeline.")
-		timeline = $HUD/SoulSweep.failsafe
-
-	if not timeline:
-		push_error("SoulSweep: timeline not found and failsafe failed! (path: %s)" % path)
-		return
-
-	command_manager.start(timeline)
-
-
 func _on_evidence_menu_show_evidence(index):
 	_on_show_evidence(index)
 
