@@ -19,12 +19,50 @@ extends Command
 		emit_changed()
 	get:
 		return additive
-@export_range(0, 10.0) var letter_delay:float = 0.02:
+
+# Text Speed constants
+const TEXT_SPEED: Array = [
+	# 1 letter every 2 frames
+	# NORMAL
+	0.03,
+	# 1 letter every 3 frames
+	# SLOW
+	0.05,
+	# 1 letter every 5 frames
+	# TYPEWRITER
+	0.08,
+	# 1 letter every 1 frame
+	# FAST
+	0.015,
+	# 2 letters every 1 frame
+	# RAPID
+	0.008,
+	# Instant
+	0.0
+]
+
+enum TextSpeed {NORMAL, SLOW, TYPEWRITER, FAST, RAPID, INSTANT, CUSTOM} 
+
+@export var text_speed: TextSpeed:
 	set(value):
-		letter_delay = value
+		text_speed = value
+		if text_speed != TextSpeed.CUSTOM:
+			_letter_delay = TEXT_SPEED[value]
 		emit_changed()
 	get:
-		return letter_delay
+		return text_speed
+var _letter_delay:float = 0.03
+@export_range(0, 10.0) var letter_delay:float = 0.03:
+	set(value):
+		_letter_delay = value
+		var found = TEXT_SPEED.find(value)
+		if found != -1:
+			text_speed = found
+		else:
+			text_speed = TextSpeed.CUSTOM
+		emit_changed()
+	get:
+		return _letter_delay
 @export var wait_until_finished:bool = true:
 	set(value):
 		wait_until_finished = value
