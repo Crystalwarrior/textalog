@@ -8,6 +8,11 @@ func _gui_input(event):
 	else:
 		dialog_view._process_testimony(event)
 
+func _unhandled_input(event):
+	if dialog_view.pause_testimony or dialog_view.testimony.is_empty():
+		dialog_view._process_timeline(event)
+	else:
+		dialog_view._process_testimony(event)
 
 func _process(_delta):
 	if Input.is_action_pressed("skip"):

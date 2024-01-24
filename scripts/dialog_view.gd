@@ -8,6 +8,13 @@ extends Node
 @onready var canvas_modulate = $CanvasModulate
 @onready var choice_list = $HUD/MainView/ChoiceList
 
+var auto = false:
+	set(val):
+		auto = val
+		$HUD/MainView/DialogBox/NextIcon.modulate = Color.YELLOW if auto else Color.WHITE
+
+var auto_delay: float = 0.5
+
 var finished = false
 var waiting_on_input = true
 
@@ -62,8 +69,16 @@ func _process_testimony(event):
 
 
 func _process_timeline(event):
+	if event.is_action_pressed("auto"):
+		get_viewport().set_input_as_handled()
+		auto = not auto
+		if waiting_on_input and auto:
+			next()
 	if event.is_action_pressed("next"):
 		get_viewport().set_input_as_handled()
+		if auto:
+			auto = false
+			return
 		next()
 
 
@@ -339,13 +354,16 @@ func set_waiting_on_input(tog: bool):
 	waiting_on_input = tog
 	wait_for_input.emit(tog)
 
-
 func _on_command_manager_command_started(_command):
 	set_waiting_on_input(false)
 
 
 func _on_command_manager_command_finished(_command):
 	set_waiting_on_input(_command.get_script().resource_path == "res://addons/textalog/commands/command_dialog.gd")
+	if auto and waiting_on_input and not _command.continue_at_end:
+		await get_tree().create_timer(auto_delay).timeout
+		if auto:
+			next()
 
 
 func _on_dialog_box_message_end():
