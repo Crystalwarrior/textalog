@@ -53,3 +53,8 @@ func _notification(what: int) -> void:
 				collection.append(branch.new())
 			
 			generate_default_choices = false
+
+
+func _get_category() -> StringName:
+	return &"Textalog"
+

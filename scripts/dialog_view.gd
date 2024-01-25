@@ -13,7 +13,7 @@ var auto = false:
 		auto = val
 		$HUD/MainView/DialogBox/NextIcon.modulate = Color.YELLOW if auto else Color.WHITE
 
-var auto_delay: float = 0.5
+var auto_delay: float = 1.2
 
 var finished = false
 var waiting_on_input = true

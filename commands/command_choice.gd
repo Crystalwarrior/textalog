@@ -53,3 +53,8 @@ func get_next_command_position() -> int:
 		owner_sibling = owner.get_next_available_command()
 	
 	return owner_sibling.position
+
+
+func _get_category() -> StringName:
+	return &"Textalog"
+

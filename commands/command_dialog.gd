@@ -1,18 +1,21 @@
 @tool
 extends Command
 
+## The [String] to show in the showname box of the dialog box
 @export var showname:String = "":
 	set(value):
 		showname = value
 		emit_changed()
 	get:
 		return showname
+## The dialog to show in the dialog box. Opens the Dialog Editor.
 @export_multiline var dialog:String:
 	set(value):
 		dialog = value
 		emit_changed()
 	get:
 		return dialog
+## Turn this on if you want to add the [param dialog] to the Dialog Box, instead of reset it.
 @export var additive:bool = false:
 	set(value):
 		additive = value
@@ -43,6 +46,7 @@ const TEXT_SPEED: Array = [
 
 enum TextSpeed {NORMAL, SLOW, TYPEWRITER, FAST, RAPID, INSTANT, CUSTOM} 
 
+## The speed of the text crawl in the dialog box
 @export var text_speed: TextSpeed:
 	set(value):
 		text_speed = value
@@ -52,6 +56,7 @@ enum TextSpeed {NORMAL, SLOW, TYPEWRITER, FAST, RAPID, INSTANT, CUSTOM}
 	get:
 		return text_speed
 var _letter_delay:float = 0.03
+## The amount of time text pauses for on each letter
 @export_range(0, 10.0) var letter_delay:float = 0.03:
 	set(value):
 		_letter_delay = value
@@ -63,24 +68,28 @@ var _letter_delay:float = 0.03
 		emit_changed()
 	get:
 		return _letter_delay
+## Pause the timeline until the dialog finishes showing.
 @export var wait_until_finished:bool = true:
 	set(value):
 		wait_until_finished = value
 		emit_changed()
 	get:
 		return wait_until_finished
+## The character that should play their speaking animation as the dialog is processed
 @export var speaking_character:String = "":
 	set(value):
 		speaking_character = value
 		emit_changed()
 	get:
 		return speaking_character
+## If we want to show a bounce animation on the [param speaking_character]
 @export var bump_speaker:bool = false:
 	set(value):
 		bump_speaker = value
 		emit_changed()
 	get:
 		return bump_speaker
+## If we want to highlight the [param speaking_character]
 @export var highlight_speaker:bool = false:
 	set(value):
 		highlight_speaker = value
@@ -151,3 +160,8 @@ func _property_get_revert(property: StringName):
 func _init() -> void:
 	super()
 	continue_at_end = false
+
+
+func _get_category() -> StringName:
+	return &"Textalog"
+
