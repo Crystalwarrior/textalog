@@ -96,10 +96,18 @@ var _letter_delay:float = 0.03
 		emit_changed()
 	get:
 		return highlight_speaker
+## Whether to hide the dialog box after text finished processing,
+## or immediately if [param wait_until_finished] is false
+@export var hide_dialog:bool = false:
+	set(value):
+		hide_dialog = value
+		emit_changed()
+	get:
+		return hide_dialog
 
 func _execution_steps() -> void:
 	command_started.emit()
-	
+	target_node.set_dialog_visible(true)
 	target_node.dialog(showname, dialog, additive, letter_delay)
 	if speaking_character:
 		var speaker = target_node.get_character(speaking_character)
@@ -123,9 +131,11 @@ func _execution_steps() -> void:
 			CONNECT_ONE_SHOT
 			)
 	else:
-		command_finished.emit()
+		dialog_finished()
 
 func dialog_finished():
+	if hide_dialog:
+		target_node.set_dialog_visible(false)
 	command_finished.emit()
 
 func _get_name() -> StringName:
