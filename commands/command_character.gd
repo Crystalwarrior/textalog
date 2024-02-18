@@ -8,6 +8,13 @@ extends Command
 		emit_changed()
 	get:
 		return character
+## The name to instantiate the character scene with. Leave blank to keep the same.
+@export var character_name: String = "":
+	set(value):
+		character_name = value
+		emit_changed()
+	get:
+		return character_name
 ## The emote to play on the EmoteSwitcher [AnimationPlayer] in the [param character] scene.
 @export var emote: String = "":
 	set(value):
@@ -62,7 +69,7 @@ extends Command
 		emit_changed()
 	get:
 		return flip_duration
-## If our character is going to be shaking or not (looped).
+## If our character will shake or not.
 @export var shaking:bool = false:
 	set(value):
 		shaking = value
@@ -78,7 +85,7 @@ extends Command
 	get:
 		return set_z_index
 ## Pause the timeline progression until all the animations have finished
-## ([param emote] does not count yet)
+## (only non-looped [param emote]s will count for this)
 @export var wait_until_finished:bool = true:
 	set(value):
 		wait_until_finished = value
@@ -103,49 +110,13 @@ extends Command
 
 func _execution_steps() -> void:
 	command_started.emit()
-
-	var target = target_node
-	if character:
-		target = get_character()
-		if not target:
-			target = target_node.add_character(character, to_position, flipped)
-
-	if emote != "":
-		target.set_emote(emote)
-	if shaking:
-		target.start_shaking()
-	else:
-		target.stop_shaking()
-	if fade_out:
-		target.fadeout(fade_duration)
-	else:
-		target.fadein(fade_duration)
-	target.z_index = set_z_index
-	target.flip_h(flipped, flip_duration)
-	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
-	if wait_until_finished and zoom_duration > 0:
-		if target.is_connected("tween_finished", character_finished):
-			target.tween_finished.disconnect(character_finished)
-		target.tween_finished.connect(
-			character_finished,
-			CONNECT_ONE_SHOT
-			)
-	else:
+	if not target_node.has_method(&"character"):
+		push_error("[Character Command]: target_node '%s' doesn't have 'character' method." % target_node)
+		return
+	# Pass over ourselves to let the target node handle everything else
+	target_node.character(self)
+	if not wait_until_finished:
 		command_finished.emit()
-
-
-func get_character():
-	if not character:
-		return null
-	var charname = character.get_state().get_node_name(0)
-	return target_node.get_character(charname)
-
-
-func character_finished():
-	var target = get_character()
-	if delete and target:
-		get_character().queue_free()
-	command_finished.emit()
 
 
 func _get_name() -> StringName:
@@ -190,7 +161,7 @@ func _get_icon() -> Texture:
 		var _emote = emote
 		if _emote == "":
 			_emote = "idle"
-		var path = character.resource_path.get_basename() + "/icons/" + _emote + ".png"
+		var path = character.resource_path.get_base_dir() + "/icons/" + _emote + ".png"
 		if ResourceLoader.exists(path):
 			return load(path)
 	return load("res://addons/textalog/commands/icons/character.svg")

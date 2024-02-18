@@ -6,6 +6,10 @@ const CommandDialog = preload("res://addons/textalog/commands/command_dialog.gd"
 
 const DialogEditorPath = preload("res://addons/textalog/commands/dialog/dialog_editor.tscn")
 
+const edit_icon = preload("res://addons/textalog/commands/icons/speech.svg")
+
+const highlighter = preload("res://addons/textalog/commands/dialog/dialog_highlighter.tres")
+
 class DialogEditorWindow extends ConfirmationDialog:
 	var editor_plugin:EditorPlugin
 	var dialog_editor
@@ -16,6 +20,8 @@ class DialogEditorWindow extends ConfirmationDialog:
 
 class DialogEditorButton extends EditorProperty:
 	var editor_plugin:EditorPlugin
+	var hbox:HBoxContainer
+	var text_edit:TextEdit
 	var method_button:Button
 	var dialog_editor_window:DialogEditorWindow
 	
@@ -25,26 +31,46 @@ class DialogEditorButton extends EditorProperty:
 		var text:String = ""
 		var icon:Texture = get_theme_icon("Node", "EditorIcons")
 
-		method_button.text = dialog
+		if text_edit.text != dialog:
+			text_edit.text = dialog
 	
 	func _method_button_pressed() -> void:
 		dialog_editor_window.confirmed.connect(_method_selector_confirmed, CONNECT_ONE_SHOT)
-		dialog_editor_window.popup_centered(Vector2i(1280, 720))
-		dialog_editor_window.dialog_editor.set_dialog(get_edited_object().dialog)
+		dialog_editor_window.popup_centered(Vector2i(522, 522))
+		dialog_editor_window.dialog_editor.set_command(get_edited_object())
 
 	func _method_selector_confirmed() -> void:
 		get_edited_object().dialog = dialog_editor_window.dialog_editor.text_edit.text
 		get_edited_object().notify_property_list_changed()
 
+	func _on_text_changed() -> void:
+		get_edited_object().dialog = text_edit.text
+
 	func _enter_tree() -> void:
 		dialog_editor_window = editor_plugin.dialog_editor
 
 	func _init() -> void:
+		hbox = HBoxContainer.new()
+		add_child(hbox)
+		set_bottom_editor(hbox)
+		
+		text_edit = TextEdit.new()
+		text_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		text_edit.wrap_mode = TextEdit.LINE_WRAPPING_BOUNDARY
+		text_edit.custom_minimum_size = Vector2(0, 96)
+		text_edit.syntax_highlighter = highlighter
+		text_edit.text_changed.connect(_on_text_changed)
+		
+		hbox.add_child(text_edit)
+		add_focusable(text_edit)
+
 		method_button = Button.new()
-		method_button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-		method_button.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		method_button.icon = edit_icon
+		method_button.expand_icon = true
 		method_button.pressed.connect(_method_button_pressed)
-		add_child(method_button)
+		method_button.custom_minimum_size = Vector2(32, 0)
+		method_button.tooltip_text = "Open Dialog Editor"
+		hbox.add_child(method_button)
 		add_focusable(method_button)
 
 func _can_handle(object: Object) -> bool:

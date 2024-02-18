@@ -27,7 +27,7 @@ extends Command
 const TEXT_SPEED: Array = [
 	# 1 letter every 2 frames
 	# NORMAL
-	0.03,
+	0.034,
 	# 1 letter every 3 frames
 	# SLOW
 	0.05,
@@ -36,7 +36,7 @@ const TEXT_SPEED: Array = [
 	0.08,
 	# 1 letter every 1 frame
 	# FAST
-	0.015,
+	0.017,
 	# 2 letters every 1 frame
 	# RAPID
 	0.008,
@@ -55,9 +55,9 @@ enum TextSpeed {NORMAL, SLOW, TYPEWRITER, FAST, RAPID, INSTANT, CUSTOM}
 		emit_changed()
 	get:
 		return text_speed
-var _letter_delay:float = 0.03
+var _letter_delay:float = 0.034
 ## The amount of time text pauses for on each letter
-@export_range(0, 10.0) var letter_delay:float = 0.03:
+@export_range(0, 10.0) var letter_delay:float = 0.034:
 	set(value):
 		_letter_delay = value
 		var found = TEXT_SPEED.find(value)
@@ -68,6 +68,13 @@ var _letter_delay:float = 0.03
 		emit_changed()
 	get:
 		return _letter_delay
+## The blip sound to use for this dialog box
+@export var blip_sound:String = "male":
+	set(value):
+		blip_sound = value
+		emit_changed()
+	get:
+		return blip_sound
 ## Pause the timeline until the dialog finishes showing.
 @export var wait_until_finished:bool = true:
 	set(value):
@@ -107,36 +114,14 @@ var _letter_delay:float = 0.03
 
 func _execution_steps() -> void:
 	command_started.emit()
-	target_node.set_dialog_visible(true)
-	target_node.dialog(showname, dialog, additive, letter_delay)
-	if speaking_character:
-		var speaker = target_node.get_character(speaking_character)
-		if speaker:
-			if bump_speaker:
-				speaker.bump()
-			for chara in target_node.get_characters():
-				if not highlight_speaker or chara == speaker:
-					chara.blackout(false, 0.25)
-				else:
-					chara.blackout(true, 0.25)
-			speaker.start_talking()
-			if target_node.is_connected("dialog_finished", speaker.stop_talking):
-				target_node.dialog_finished.disconnect(speaker.stop_talking)
-			target_node.dialog_finished.connect(speaker.stop_talking, CONNECT_ONE_SHOT)
-	if wait_until_finished and letter_delay > 0:
-		if target_node.is_connected("dialog_finished", dialog_finished):
-			target_node.dialog_finished.disconnect(dialog_finished)
-		target_node.dialog_finished.connect(
-			dialog_finished,
-			CONNECT_ONE_SHOT
-			)
-	else:
-		dialog_finished()
+	if not target_node.has_method(&"dialog"):
+		push_error("[Dialog Command]: target_node '%s' doesn't have 'dialog' method." % target_node)
+		return
+	# Pass over ourselves to let the target node handle everything else
+	target_node.dialog(self)
+	if not wait_until_finished:
+		go_to_next_command()
 
-func dialog_finished():
-	if hide_dialog:
-		target_node.set_dialog_visible(false)
-	command_finished.emit()
 
 func _get_name() -> StringName:
 	var prefix = ""
@@ -147,7 +132,7 @@ func _get_name() -> StringName:
 
 func _get_hint() -> String:
 	var regex = RegEx.new()
-	regex.compile("\\[.*?\\]")
+	regex.compile("\\[.*?\\]|{.*?}")
 	var text_without_tags = regex.sub(dialog, "", true)
 	return text_without_tags
 

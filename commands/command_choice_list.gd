@@ -8,8 +8,10 @@ var generate_default_choices:bool = true
 
 func _execution_steps() -> void:
 	command_started.emit()
+	var choices: PackedStringArray = []
 	for command in collection:
-		target_node.add_choice(command.text)
+		choices.append(command.text)
+	target_node.multiple_choice(choices)
 	if target_node.is_connected("choice_selected", choice_selected):
 		target_node.choice_selected.disconnect(choice_selected)
 	target_node.choice_selected.connect(
@@ -18,7 +20,6 @@ func _execution_steps() -> void:
 	)
 
 func choice_selected(index):
-	target_node.clear_choices()
 	choice_picked = index
 	go_to_next_command()
 

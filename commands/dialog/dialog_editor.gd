@@ -1,26 +1,50 @@
 @tool
 extends Control
 
-@onready var text_edit: TextEdit = $VBoxContainer/TextEdit
+const color_save_path = "res://addons/textalog/swatches.ini"
 
-@onready var dialog_box = $DialogBox
-@onready var color_picker_dialog = $ColorPickerDialog
-@onready var color_picker = $ColorPickerDialog/ColorPicker
+@onready var text_edit: TextEdit = %TextEdit
 
-@onready var button_bar = $VBoxContainer/ButtonBar
+@onready var dialog_box = %DialogBox
+@onready var color_picker_dialog = %ColorPickerDialog
+@onready var color_picker = %ColorPicker
+
+@onready var button_bar = %ButtonBar
 
 var current_color_tag = ""
+
+var editor_command: Command
+
+var current_speed = 0.034
+var current_blip = "male"
+
+
+func _ready():
+	if dialog_box.dialog_container.shake_effect == null:
+		dialog_box.dialog_container.add_shake_effect()
+
+	load_color_presets()
+
+
+func set_command(command: Command):
+	editor_command = command
+	set_dialog(editor_command.dialog)
+	dialog_box.dialog_container.set_showname_text(editor_command.showname)
+	current_speed = editor_command.letter_delay
+	dialog_box.set_speed(current_speed)
+	current_blip = editor_command.blip_sound
+	dialog_box.set_blipsound(current_blip)
 
 
 func set_dialog(text: String):
 	text_edit.text = text
-	dialog_box.dialog_label.text = text_edit.text
-	dialog_box.dialog_label.visible_characters = -1
+	dialog_box.dialog_container.set_text_to_show(text_edit.text)
+	dialog_box.dialog_container.text_label.visible_characters = -1
 
 
 func _on_text_edit_text_changed():
-	dialog_box.dialog_label.text = text_edit.text
-	dialog_box.dialog_label.visible_characters = -1
+	dialog_box.dialog_container.set_text_to_show(text_edit.text)
+	dialog_box.dialog_container.text_label.visible_characters = -1
 
 
 func insert_tag(tag: String, options: Variant =null, overwrite_tag = false):
@@ -78,7 +102,9 @@ func insert_color(tag: String, color: Color):
 
 
 func _on_play_button_pressed():
-	dialog_box.set_msg(text_edit.text)
+	dialog_box.set_speed(current_speed)
+	dialog_box.set_blipsound(current_blip)
+	dialog_box.display_text(text_edit.text, editor_command.showname)
 
 
 func _on_color_picker_dialog_confirmed():
@@ -107,3 +133,69 @@ func _on_foreground_color_pressed():
 	color_picker_dialog.title = "Pick a foreground color"
 	color_picker_dialog.popup_centered()
 	current_color_tag = "fgcolor"
+
+
+func insert_text_command(cmd: String, param: String=""):
+	var params = " " + param if param != "" else ""
+	var insert_text = "{" + cmd + params + "}"
+	text_edit.begin_complex_operation()
+	for i in text_edit.get_caret_count():
+		text_edit.insert_text_at_caret(insert_text, i)
+	text_edit.end_complex_operation()
+	text_edit.grab_focus()
+
+
+func _on_option_button_item_selected(index):
+	var item_text = %spd_button.get_item_text(index)
+	var cmd = CmdValues.SPD
+	if item_text == "custom":
+		insert_text_command(cmd, "0.034")
+	else:
+		insert_text_command(cmd + "_" + item_text)
+
+
+func _on_shake_pressed():
+	insert_text_command(CmdValues.SHAKE)
+
+
+func _on_flash_pressed():
+	insert_text_command(CmdValues.FLASH)
+
+
+func _on_pause_pressed():
+	insert_text_command(CmdValues.PAUSE, "0.2")
+
+
+func _on_blip_pressed():
+	insert_text_command(CmdValues.BLIP, "male")
+
+
+func load_color_presets():
+	var config_file := ConfigFile.new()
+	var error := config_file.load(color_save_path)
+
+	if error:
+		print("Failed to load color picker presets for the Dialog Editor!")
+		return
+
+	var color_presets: PackedColorArray = config_file.get_value("", "colors", null)
+	for old_color in color_picker.get_presets():
+		color_picker.erase_preset(old_color)
+	for color in color_presets:
+		color_picker.add_preset(color)
+
+
+func save_color_presets():
+	var config_file := ConfigFile.new()
+
+	config_file.set_value("", "colors", color_picker.get_presets())
+
+	config_file.save(color_save_path)
+
+
+func _on_color_picker_preset_added(_color):
+	save_color_presets()
+
+
+func _on_color_picker_preset_removed(_color):
+	save_color_presets()
