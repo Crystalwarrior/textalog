@@ -201,6 +201,7 @@ func go_to_previous_statement():
 
 
 func go_to_statement(index: int):
+	pause_testimony = false
 	command_manager._disconnect_command_signals(command_manager.current_command)
 	current_testimony_index = index
 	testimony_indicator.select_statement(current_testimony_index)
@@ -211,7 +212,6 @@ func go_to_statement(index: int):
 
 
 func set_statements(statements: PackedStringArray):
-	testimony_timeline = command_manager.current_collection
 	testimony = statements
 	testimony_indicator.set_statements(testimony.size())
 
@@ -219,6 +219,7 @@ func set_statements(statements: PackedStringArray):
 func start_testimony(statements: PackedStringArray = []):
 	pause_testimony = false
 	current_testimony_index = 0
+	testimony_timeline = command_manager.current_collection
 	if not statements.is_empty():
 		set_statements(statements)
 	go_to_statement(current_testimony_index)
@@ -238,8 +239,11 @@ func set_press(timeline: CommandCollection = null):
 	current_press = timeline
 
 
-func set_present(timeline: CommandCollection = null):
-	current_present = timeline
+func set_present(timeline: String = "", allow_evidence = true, allow_notes = false):
+	if timeline == "":
+		current_present = null
+	else:
+		current_present = load(timeline)
 	$HUD/EvidenceMenu/EvidenceViewer/ShowButton.visible = current_present != null
 
 
@@ -325,8 +329,16 @@ func get_evidence_name(index: int = -1):
 	var evidence_name = ""
 	var evidence_list = $HUD/EvidenceMenu.evidence_list
 	if index < evidence_list.size():
-		return evidence_list[index]["name"]
+		evidence_name = evidence_list[index]["name"]
 	return evidence_name
+
+
+func get_note_name(index: int = -1):
+	var note_name = ""
+	var notes_list = $HUD/EvidenceMenu.notes_list
+	if index < notes_list.size():
+		note_name = notes_list[index]["name"]
+	return note_name
 
 
 func _character_stop_talking(speaker):
@@ -340,13 +352,12 @@ func _on_command_manager_timeline_started(_timeline_resource):
 
 func _on_command_manager_timeline_finished(_timeline_resource):
 	# TODO: don't use pause_testimony, instead use the goto/return logic
-	if testimony and pause_testimony:
-		pause_testimony = false
-		if next_statement_on_pause:
-			go_to_next_statement()
-		else:
-			go_to_statement(current_testimony_index)
-		return
+	#if testimony and pause_testimony:
+		#if next_statement_on_pause:
+			#go_to_next_statement()
+		#else:
+			#go_to_statement(current_testimony_index)
+		#return
 	finished = true
 
 
@@ -371,7 +382,7 @@ func _on_dialog_box_message_end():
 
 
 func _on_show_evidence(index):
-	#pause_testimony = true
+	pause_testimony = true
 	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
@@ -382,8 +393,8 @@ func _on_show_evidence(index):
 
 	if current_present == null:
 		return
-	command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.go_to_command_in_collection(0, current_present)
+	#command_manager._disconnect_command_signals(command_manager.current_command)
+	command_manager.jump_to_command(0, current_present)
 
 
 func _on_evidence_menu_show_evidence(index):
