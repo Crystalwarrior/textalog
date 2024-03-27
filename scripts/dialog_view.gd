@@ -356,7 +356,6 @@ func character(character_command:CharacterCommand) -> void:
 	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
 	# If we wait until finished, remember tell the timeline to continue
 	if wait_until_finished:
-		print(target.waiting_on_animations)
 		if target.waiting_on_animations > 0:
 			await target.animation_finished
 		character_command.go_to_next_command()

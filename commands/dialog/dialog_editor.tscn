@@ -1,8 +1,7 @@
-[gd_scene load_steps=21 format=3 uid="uid://ctilnyafp01uw"]
+[gd_scene load_steps=20 format=3 uid="uid://ctilnyafp01uw"]
 
 [ext_resource type="Script" path="res://addons/textalog/commands/dialog/dialog_editor.gd" id="1_jdxpf"]
-[ext_resource type="PackedScene" uid="uid://c2aekiuvsvmxj" path="res://scenes/Dialog/DialogBox.tscn" id="2_cojhd"]
-[ext_resource type="Texture2D" uid="uid://bdg3mp3xp75mj" path="res://assets/backgrounds/courtroomHall.png" id="2_u5xnv"]
+[ext_resource type="PackedScene" uid="uid://drtv4tdo7e08i" path="res://addons/textalog/scenes/dialog_box.tscn" id="2_cojhd"]
 [ext_resource type="Texture2D" uid="uid://bnaun6p5vttqr" path="res://addons/textalog/commands/icons/bold.svg" id="3_sscjh"]
 [ext_resource type="Texture2D" uid="uid://dtyuq2rh62ef0" path="res://addons/textalog/commands/icons/italic.svg" id="4_mdvss"]
 [ext_resource type="Texture2D" uid="uid://c7n2wpa6lq2vk" path="res://addons/textalog/commands/icons/underline.svg" id="5_u3vta"]
@@ -65,17 +64,10 @@ layout_mode = 2
 layout_mode = 2
 text = "Play Message"
 
-[node name="CenterContainer" type="CenterContainer" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="bgRef" type="TextureRect" parent="ScrollContainer/VBoxContainer/CenterContainer"]
-custom_minimum_size = Vector2(256, 192)
-layout_mode = 2
-texture = ExtResource("2_u5xnv")
-
-[node name="DialogBox" parent="ScrollContainer/VBoxContainer/CenterContainer" instance=ExtResource("2_cojhd")]
+[node name="DialogBox" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_cojhd")]
 unique_name_in_owner = true
 texture_filter = 1
+custom_minimum_size = Vector2(1280, 235)
 layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]

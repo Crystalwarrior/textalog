@@ -20,31 +20,28 @@ var current_blip = "male"
 
 
 func _ready():
-	if dialog_box.dialog_container.shake_effect == null:
-		dialog_box.dialog_container.add_shake_effect()
-
 	load_color_presets()
 
 
 func set_command(command: Command):
 	editor_command = command
 	set_dialog(editor_command.dialog)
-	dialog_box.dialog_container.set_showname_text(editor_command.showname)
+	dialog_box.set_showname(editor_command.showname)
 	current_speed = editor_command.letter_delay
-	dialog_box.set_speed(current_speed)
+	dialog_box.letter_delay = current_speed
 	current_blip = editor_command.blip_sound
 	dialog_box.set_blipsound(current_blip)
 
 
 func set_dialog(text: String):
 	text_edit.text = text
-	dialog_box.dialog_container.set_text_to_show(text_edit.text)
-	dialog_box.dialog_container.text_label.visible_characters = -1
+	dialog_box.dialog_label.text = text
+	dialog_box.dialog_label.visible_characters = -1
 
 
 func _on_text_edit_text_changed():
-	dialog_box.dialog_container.set_text_to_show(text_edit.text)
-	dialog_box.dialog_container.text_label.visible_characters = -1
+	dialog_box.dialog_label.text = text_edit.text
+	dialog_box.dialog_label.visible_characters = -1
 
 
 func insert_tag(tag: String, options: Variant =null, overwrite_tag = false):
@@ -102,9 +99,7 @@ func insert_color(tag: String, color: Color):
 
 
 func _on_play_button_pressed():
-	dialog_box.set_speed(current_speed)
-	dialog_box.set_blipsound(current_blip)
-	dialog_box.display_text(text_edit.text, editor_command.showname)
+	print("Not implemented :(")
 
 
 func _on_color_picker_dialog_confirmed():
@@ -146,28 +141,29 @@ func insert_text_command(cmd: String, param: String=""):
 
 
 func _on_option_button_item_selected(index):
-	var item_text = %spd_button.get_item_text(index)
-	var cmd = CmdValues.SPD
-	if item_text == "custom":
-		insert_text_command(cmd, "0.034")
-	else:
-		insert_text_command(cmd + "_" + item_text)
+	print("NOT IMPLEMENTED")
+	#var item_text = %spd_button.get_item_text(index)
+	#var cmd = CmdValues.SPD
+	#if item_text == "custom":
+		#insert_text_command(cmd, "0.034")
+	#else:
+		#insert_text_command(cmd + "_" + item_text)
 
 
 func _on_shake_pressed():
-	insert_text_command(CmdValues.SHAKE)
+	print("NOT IMPLEMENTED")
 
 
 func _on_flash_pressed():
-	insert_text_command(CmdValues.FLASH)
+	print("NOT IMPLEMENTED")
 
 
 func _on_pause_pressed():
-	insert_text_command(CmdValues.PAUSE, "0.2")
+	print("NOT IMPLEMENTED")
 
 
 func _on_blip_pressed():
-	insert_text_command(CmdValues.BLIP, "male")
+	print("NOT IMPLEMENTED")
 
 
 func load_color_presets():
