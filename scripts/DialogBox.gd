@@ -80,12 +80,12 @@ func set_showname(showname):
 
 func set_msg(text):
 	dialog_label.visible_characters = 0
-	dialog_label.dialog_label.text = text
+	dialog_label.text = text
 	message_set.emit()
 
 
 func add_msg(text):
-	dialog_label.dialog_label.text += text
+	dialog_label.text += text
 	message_add.emit()
 
 
