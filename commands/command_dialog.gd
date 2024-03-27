@@ -105,7 +105,10 @@ var _letter_delay:float = 0.034
 		return highlight_speaker
 ## Whether to hide the dialog box after text finished processing,
 ## or immediately if [param wait_until_finished] is false
-@export var hide_dialog:bool = false:
+
+enum HideDialog {NEVER, AT_END, AFTER_INPUT, INSTANTLY}
+
+@export var hide_dialog:HideDialog = HideDialog.NEVER:
 	set(value):
 		hide_dialog = value
 		emit_changed()
