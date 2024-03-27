@@ -318,6 +318,52 @@ func dialog(dialog_command:DialogCommand) -> void:
 		dialog_command.go_to_next_command()
 
 
+func character(character_command:CharacterCommand) -> void:
+	var character: PackedScene = character_command.character
+	var character_name: String = character_command.character_name
+	var emote: String = character_command.emote
+	var delete: bool = character_command.delete
+	var add_position: bool = character_command.add_position
+	var to_position: Vector2 = character_command.to_position
+	var zoom_duration: float = character_command.zoom_duration
+	var flipped: bool = character_command.flipped
+	var flip_duration: float = character_command.flip_duration
+	var shaking:bool = character_command.shaking
+	var set_z_index:int = character_command.set_z_index
+	var wait_until_finished:bool = character_command.wait_until_finished
+	var fade_out:bool = character_command.fade_out
+	var fade_duration: float = character_command.fade_duration
+
+	if character_name == "":
+		character_name = character.resource_path.get_file().trim_suffix("." + character.resource_path.get_extension())
+
+	var target = get_character(character_name)
+	if not target:
+		target = add_character(character, to_position, flipped)
+
+	if emote != "":
+		target.set_emote(emote)
+	if shaking:
+		target.start_shaking()
+	else:
+		target.stop_shaking()
+	if fade_out:
+		target.fadeout(fade_duration)
+	else:
+		target.fadein(fade_duration)
+	target.z_index = set_z_index
+	target.flip_h(flipped, flip_duration)
+	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
+	# If we wait until finished, remember tell the timeline to continue
+	if wait_until_finished:
+		print(target.waiting_on_animations)
+		if target.waiting_on_animations > 0:
+			await target.animation_finished
+		character_command.go_to_next_command()
+	if delete:
+		remove_character(character_name)
+
+
 func choice_list(choice_list_command:ChoiceListCommand) -> void:
 	var choices = choice_list_command.choices
 	for choice in choices:

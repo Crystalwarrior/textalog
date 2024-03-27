@@ -28,10 +28,17 @@ var shaketween: Tween
 var fliptween: Tween
 var bumptween: Tween
 
+signal animation_finished
+
+# The number of animations we're waiting on to finish
+var waiting_on_animations: int = 0
+
 signal tween_finished
 
 func _ready():
 	set_emote(emote_switcher.autoplay)
+	emote_switcher.animation_started.connect(_animation_started)
+	emote_switcher.animation_finished.connect(_animation_finished)
 
 
 func _process(delta):
@@ -43,7 +50,10 @@ func _process(delta):
 
 
 func _tween_finished():
+	waiting_on_animations -= 1
 	tween_finished.emit()
+	if waiting_on_animations <= 0:
+		animation_finished.emit()
 
 
 func bump():
@@ -67,6 +77,7 @@ func flip_h(tog: bool = true, duration: float = 0.2):
 		sprite_group.scale.x = -sprite_group.scale.x
 	else:
 		fliptween = create_tween()
+		waiting_on_animations += 1
 		fliptween.tween_property(sprite_group, "scale:y", sprite_group.scale.y / 1.02, duration/3)
 		fliptween.tween_property(sprite_group, "scale:x", -sprite_group.scale.x, 0)
 		fliptween.tween_property(sprite_group, "scale:y", sprite_group.scale.y * 1.02, duration/3)
@@ -105,8 +116,10 @@ func move_to(target_pos: Vector2, target_scale: Vector2 = Vector2(1, 1), duratio
 		target_pos = position + target_pos
 	if duration <= 0:
 		position = target_pos
+		scale = target_scale
 		return
 	zoomtween = create_tween()
+	waiting_on_animations += 1
 	zoomtween.tween_property(self, "position", target_pos, duration).set_trans(Tween.TRANS_CUBIC)
 	zoomtween.parallel().tween_property(self, "scale", target_scale, duration).set_trans(Tween.TRANS_CUBIC)
 	zoomtween.finished.connect(_tween_finished, CONNECT_ONE_SHOT)
@@ -116,6 +129,7 @@ func fade(out: bool = false, duration: float = 1.0):
 	if fadetween:
 		fadetween.kill()
 	fadetween = create_tween()
+	waiting_on_animations += 1
 	fadetween.tween_property(sprite_group, "self_modulate:a", 0 if out else 1, duration)
 	fadetween.finished.connect(_tween_finished, CONNECT_ONE_SHOT)
 
@@ -134,6 +148,7 @@ func fadecolor(to_color: Color = Color.WHITE, duration: float = 1.0):
 	if colortween:
 		colortween.kill()
 	colortween = create_tween()
+	waiting_on_animations += 1
 	colortween.parallel().tween_property(sprite_group, "self_modulate:r", to_color.r, duration)
 	colortween.parallel().tween_property(sprite_group, "self_modulate:g", to_color.g, duration)
 	colortween.parallel().tween_property(sprite_group, "self_modulate:b", to_color.b, duration)
@@ -202,3 +217,14 @@ func load_savedict(save_dict: Dictionary):
 		if key == "self_modulate":
 			sprite_group.self_modulate = value
 
+
+func _animation_finished(anim_name: StringName):
+	waiting_on_animations -= 1
+	if waiting_on_animations <= 0:
+		waiting_on_animations = 0
+		animation_finished.emit()
+
+
+func _animation_started(anim_name: StringName):
+	if emote_switcher.get_animation(anim_name).loop_mode == Animation.LOOP_NONE:
+		waiting_on_animations += 1
