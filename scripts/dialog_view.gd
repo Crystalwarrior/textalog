@@ -6,7 +6,17 @@ extends Node
 @onready var characters_node = $Characters
 @onready var backgrounds = $Background
 @onready var canvas_modulate = $CanvasModulate
-@onready var choice_list = $HUD/MainView/ChoiceList
+@onready var choice_list_node = $HUD/MainView/ChoiceList
+
+const SFXFOLDER = "res://sfx/"
+const MUSICFOLDER = "res://music/"
+
+const DialogCommand = preload("res://addons/textalog/commands/command_dialog.gd")
+const CharacterCommand = preload("res://addons/textalog/commands/command_character.gd")
+const EvidenceCommand = preload("res://addons/textalog/commands/command_evidence.gd")
+const MusicCommand = preload("res://addons/textalog/commands/command_music.gd")
+const BackgroundCommand = preload("res://addons/textalog/commands/command_background.gd")
+const ChoiceListCommand = preload("res://addons/textalog/commands/command_choice_list.gd")
 
 var auto = false:
 	set(val):
@@ -15,8 +25,11 @@ var auto = false:
 
 var auto_delay: float = 1.2
 
-var finished = false
-var waiting_on_input = true
+var finished: bool = false
+var waiting_on_input: bool = true
+var hide_dialog_after_input: bool = false
+
+var current_character = ""
 
 var testimony: PackedStringArray = []
 var testimony_timeline: CommandCollection
@@ -86,6 +99,8 @@ func next():
 	get_window().gui_release_focus()
 	if not waiting_on_input:
 		dialogbox.skip()
+	if hide_dialog_after_input:
+		dialogbox.hide()
 	elif not pause_testimony and not testimony.is_empty():
 		go_to_next_statement()
 	elif not finished:
@@ -256,13 +271,57 @@ func press():
 	command_manager.start(current_press)
 
 
-func dialog(showname: String = "", text: String = "", additive: bool = false, letter_delay: float = 0.02) -> void:
+func dialog(dialog_command:DialogCommand) -> void:
+	var showname = dialog_command.showname
+	var dialog = dialog_command.dialog
+	var letter_delay = dialog_command.letter_delay
+	var blip_sound = dialog_command.blip_sound
+	var hide_dialog = dialog_command.hide_dialog
+	var HideDialog = dialog_command.HideDialog
+	var wait_until_finished = dialog_command.wait_until_finished
+	var speaking_character = dialog_command.speaking_character
+	var additive = dialog_command.additive
+
+	#TODO: use these for the characters
+	var bump_speaker = dialog_command.bump_speaker
+	var highlight_speaker = dialog_command.highlight_speaker
+
 	dialogbox.letter_delay = letter_delay
-	dialogbox.set_showname(showname)
-	if additive:
-		dialogbox.add_msg(text)
-	else:
-		dialogbox.set_msg(text)
+	if blip_sound:
+		dialogbox.set_blipsound(blip_sound)
+	dialogbox.appear()
+	dialogbox.display(dialog, showname, additive)
+	
+	current_character = speaking_character
+	var chara = get_character(speaking_character)
+	if chara:
+		chara.start_talking()
+
+	if hide_dialog == HideDialog.INSTANTLY:
+		dialogbox.disappear()
+
+	hide_dialog_after_input = hide_dialog == HideDialog.AFTER_INPUT
+
+	# Pause until dialog finishes processing
+	if wait_until_finished:
+		await dialog_finished
+
+	if chara:
+		chara.stop_talking()
+
+	if hide_dialog == HideDialog.AT_END:
+		dialogbox.disappear()
+
+	current_character = ""
+	# If we wait until finished, remember tell the timeline to continue
+	if wait_until_finished:
+		dialog_command.go_to_next_command()
+
+
+func choice_list(choice_list_command:ChoiceListCommand) -> void:
+	var choices = choice_list_command.choices
+	for choice in choices:
+		add_choice(choice)
 
 
 func set_flag(flag: String, val: Variant):
@@ -277,13 +336,13 @@ func get_flag(flag: String):
 
 
 func add_choice(title, disabled = false):
-	var choice = choice_list.add_choice(title, disabled)
+	var choice = choice_list_node.add_choice(title, disabled)
 	if choice.text in choice_history:
 		choice.modulate = Color(0.65, 0.65, 0.85)
 
 
 func clear_choices():
-	choice_list.clear_choices()
+	choice_list_node.clear_choices()
 
 
 func get_savedict() -> Dictionary:
@@ -416,6 +475,9 @@ func _on_object_clicked(obj, target_timeline: CommandCollection):
 
 
 func _on_choice_list_choice_selected(index):
-	choice_history.append(choice_list.get_choice_by_index(index).text)
+	choice_history.append(choice_list_node.get_choice_by_index(index).text)
 	choice_selected.emit(index)
 	last_picked_choice = index
+	var choice_list_command: ChoiceListCommand = command_manager.current_command
+	choice_list_command.choice_selected(index)
+	clear_choices()

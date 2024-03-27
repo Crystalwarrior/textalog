@@ -2,22 +2,20 @@
 extends Command
 
 var choice_picked
+var choices: PackedStringArray = []
 
 const ChoiceClass = preload("res://addons/textalog/commands/command_choice.gd")
 var generate_default_choices:bool = true
 
 func _execution_steps() -> void:
 	command_started.emit()
-	var choices: PackedStringArray = []
+	if not target_node.has_method(&"choice_list"):
+		push_error("[Choice List Command]: target_node '%s' doesn't have 'choice_list' method." % target_node)
+		return
+	choices.clear()
 	for command in collection:
 		choices.append(command.text)
-	target_node.multiple_choice(choices)
-	if target_node.is_connected("choice_selected", choice_selected):
-		target_node.choice_selected.disconnect(choice_selected)
-	target_node.choice_selected.connect(
-		choice_selected,
-		CONNECT_ONE_SHOT
-	)
+	target_node.choice_list(self)
 
 func choice_selected(index):
 	choice_picked = index

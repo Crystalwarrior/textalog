@@ -2,7 +2,7 @@
 extends Resource
 class_name Evidence
 
-@export var image: Texture = preload("res://icon.png"):
+@export var image: Texture = null:
 	set(value):
 		image = value
 		emit_changed()

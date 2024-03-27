@@ -26,6 +26,11 @@ var blip_counter: int = 0
 
 var parsed_text = ""
 
+const BLIPMALE_STREAM: AudioStream = preload("res://addons/textalog/sfx/blip_male.wav")
+const BLIPFEMALE_STREAM: AudioStream = preload("res://addons/textalog/sfx/blip_female.wav")
+const BLIPTYPEWRITER_STREAM: AudioStream = preload("res://addons/textalog/sfx/typewriter.wav")
+const BLIPFOLDER = "res://blips/"
+
 
 func _on_dialog_view_wait_for_input(tog):
 	next_icon._on_dialog_view_wait_for_input(tog)
@@ -47,8 +52,6 @@ func _process(delta):
 
 
 func blip():
-	if blip_player.stream != blip_sound:
-		blip_player.stream = blip_sound
 	blip_player.play()
 
 
@@ -78,16 +81,50 @@ func set_showname(showname):
 func set_msg(text):
 	dialog_label.visible_characters = 0
 	dialog_label.text = text
-	parsed_text = dialog_label.get_parsed_text()
 	message_set.emit()
-	start_processing()
 
 
 func add_msg(text):
 	dialog_label.text += text
-	parsed_text = dialog_label.get_parsed_text()
 	message_add.emit()
+
+
+func display(text, showname, additive):
+	set_showname(showname)
+	if additive:
+		add_msg(text)
+	else:
+		set_msg(text)
+	parsed_text = dialog_label.get_parsed_text()
 	start_processing()
+
+
+func appear():
+	show()
+
+
+func disappear():
+	hide()
+
+
+func set_blipsound(blip_string:String):
+	var new_stream: AudioStream
+	if blip_string == "male":
+		new_stream = BLIPMALE_STREAM
+	elif blip_string == "female":
+		new_stream = BLIPFEMALE_STREAM
+	elif blip_string == "typewriter":
+		new_stream = BLIPTYPEWRITER_STREAM
+	else:
+		# Direct filepath to blip
+		if ResourceLoader.exists(blip_string, "AudioStream"):
+			new_stream = load(blip_string)
+		# Filename in the blips folder
+		elif ResourceLoader.exists(BLIPFOLDER + blip_string + ".wav", "AudioStream"):
+			new_stream = load(BLIPFOLDER + blip_string + ".wav")
+		else:
+			push_error("Blip sound ", blip_string, " not found!")
+	blip_player.set_stream(new_stream)
 
 
 func get_savedict() -> Dictionary:
