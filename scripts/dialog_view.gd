@@ -7,7 +7,7 @@ extends Node
 @onready var backgrounds = $Background
 @onready var canvas_modulate = $CanvasModulate
 @onready var choice_list_node = $HUD/MainView/ChoiceList
-
+@onready var evidence_menu = $HUD/EvidenceMenu
 const SFXFOLDER = "res://sfx/"
 const MUSICFOLDER = "res://music/"
 
@@ -367,6 +367,19 @@ func choice_list(choice_list_command:ChoiceListCommand) -> void:
 	var choices = choice_list_command.choices
 	for choice in choices:
 		add_choice(choice)
+
+
+func evidence(evidence_command:EvidenceCommand) -> void:
+	# TODO: have a game data object that tracks evidence, don't let the UI keep track.
+	match evidence_command.do_what:
+		EvidenceCommand.Action.ADD_EVIDENCE:
+			evidence_menu.add(evidence_command.evidence)
+		EvidenceCommand.Action.ERASE_EVIDENCE:
+			evidence_menu.evidence_list.erase(evidence_command.evidence)
+		EvidenceCommand.Action.INSERT_AT_INDEX:
+			evidence_menu.evidence_list.insert(evidence_command.at_index, evidence_command.evidence)
+		EvidenceCommand.Action.REMOVE_AT_INDEX:
+			evidence_menu.evidence_list.remove_at(evidence_command.at_index)
 
 
 func set_flag(flag: String, val: Variant):

@@ -18,14 +18,6 @@ var current_selected_evidence = -1
 var evidence_list = []
 var notes_list = []
 
-
-func _ready():
-	for dict in evidence_list:
-		evidence_scroller.add_evidence(dict)
-	for dict in notes_list:
-		notes_scroller.add_evidence(dict)
-
-
 func deselect_all():
 	evidence_scroller.deselect()
 	notes_scroller.deselect()
@@ -33,6 +25,15 @@ func deselect_all():
 
 func _on_show_button_pressed():
 	show_evidence.emit(current_selected_evidence)
+
+
+func add(evidence: Evidence, is_note=false):
+	if is_note:
+		notes_list.append(evidence)
+		notes_scroller.add_evidence(evidence)
+	else:
+		evidence_list.append(evidence)
+		evidence_scroller.add_evidence(evidence)
 
 
 #region EVIDENCE CODE
@@ -56,6 +57,7 @@ func find_name(evidence_name):
 			return evi
 
 
+# TODO: deprecate
 func add_evidence(_name, _desc, _icon):
 	if _icon is String:
 		_icon = load(_icon)
@@ -116,6 +118,7 @@ func find_note_name(note_name):
 			return evi
 
 
+# TODO: deprecate
 func add_note(_name, _desc, _icon):
 	if _icon is String:
 		_icon = load(_icon)
