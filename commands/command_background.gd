@@ -29,11 +29,8 @@ var pan_duration: float = 0.0:
 
 func _execution_steps() -> void:
 	command_started.emit()
-	if not target_node.has_method(&"background"):
-		push_error("[Background Command]: target_node '%s' doesn't have 'background' method." % target_node)
-		return
-	# Pass over ourselves to let the target node handle everything else
-	target_node.background(self)
+	if target_node.has_method(&"background"):
+		target_node.background(self)
 	go_to_next_command()
 
 

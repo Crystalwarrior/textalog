@@ -1,12 +1,17 @@
 extends Node
 
-@export var savefile_path = "user://main.save";
+@export var savefile_folder = "user://savegames/";
 
 # Note: This can be called from anywhere inside the tree. This function is
 # path independent.
 # Go through everything in the persist category and ask them to return a
 # dict of relevant variables.
-func save_game():
+func save_game(slot: int):
+	var savefile_path = savefile_folder + "save" + str(slot)
+	var error = DirAccess.make_dir_recursive_absolute(savefile_folder) 
+	if error:
+		printerr("Failed to create savegames/ folder!")
+		return false
 	var save_file = FileAccess.open(savefile_path, FileAccess.WRITE)
 	var save_nodes = get_tree().get_nodes_in_group("save")
 	for node in save_nodes:
@@ -26,12 +31,14 @@ func save_game():
 
 		# Store the save dictionary as a new line in the save file.
 		save_file.store_var(node_data)
+	return true
 
 
-func load_game():
+func load_game(slot: int):
+	var savefile_path = savefile_folder + "save" + str(slot)
 	if not FileAccess.file_exists(savefile_path):
-		assert(false)
-		return # Error! We don't have a save to load.
+		printerr("Failed to find the file %s!" % [savefile_path])
+		return false # Error! We don't have a save to load.
 
 	var save_file = FileAccess.open(savefile_path, FileAccess.READ)
 	while save_file.get_position() < save_file.get_length():
@@ -53,3 +60,4 @@ func load_game():
 			continue
 
 		node.load_savedict(data)
+	return true

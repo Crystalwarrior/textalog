@@ -2,16 +2,16 @@ extends Control
 
 signal show_evidence(index)
 
-@onready var gray_out := $GrayOut
+@onready var gray_out := %GrayOut
 
-@onready var viewer := $EvidenceViewer
-@onready var viewer_box := $EvidenceViewer/EvidenceBox
+@onready var viewer := %EvidenceViewer
+@onready var viewer_box := %EvidenceBox
 
-@onready var evidence_scroller := $EvidenceScroller
-@onready var evidence_toggle := $EvidenceToggle
+@onready var evidence_scroller := %EvidenceScroller
+@onready var evidence_toggle := %EvidenceToggle
 
-@onready var notes_scroller := $NotesScroller
-@onready var notes_toggle := $NotesToggle
+@onready var notes_scroller := %NotesScroller
+@onready var notes_toggle := %NotesToggle
 
 var current_selected_evidence = -1
 
@@ -164,3 +164,9 @@ func _on_notes_toggled(toggled_on):
 
 #endregion
 
+
+
+func _on_expand_collapse_button_pressed():
+	var shown = not %EvidencePullout.visible
+	%EvidencePullout.set_visible(shown)
+	%ExpandCollapseButton.set_text("⬆💼⬆" if shown else "⬇💼⬇")

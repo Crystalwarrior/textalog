@@ -1,14 +1,25 @@
-[gd_scene load_steps=16 format=3 uid="uid://drtv4tdo7e08i"]
+[gd_scene load_steps=22 format=3 uid="uid://drtv4tdo7e08i"]
 
+[ext_resource type="Theme" uid="uid://5dtwhyk6sqrv" path="res://ui/dialog_theme.tres" id="1_eo6rx"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/DialogBox.gd" id="1_xumso"]
 [ext_resource type="AudioStream" uid="uid://yk8rowww05ww" path="res://sfx/blip.wav" id="2_g5520"]
-[ext_resource type="Theme" uid="uid://b2rsub3l68wd5" path="res://addons/textalog/ui/dialog_theme.tres" id="3_6aa05"]
+[ext_resource type="Texture2D" uid="uid://dhrjnqdo0hwji" path="res://ui/chat_bg.png" id="4_86erc"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/Showname.gd" id="4_fcl71"]
+[ext_resource type="StyleBox" uid="uid://x5ccydiwsw5x" path="res://ui/dialog_showname.tres" id="4_wqbrc"]
+[ext_resource type="Texture2D" uid="uid://bi2d5epogb575" path="res://ui/speedlinenew.png" id="5_hi6kt"]
 [ext_resource type="Texture2D" uid="uid://de4v8ab7gv4v5" path="res://addons/textalog/ui/diamond.png" id="5_u2r35"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/NameIcon.gd" id="6_krw2h"]
-[ext_resource type="Texture2D" uid="uid://cj80nqml0gfh7" path="res://addons/textalog/ui/arrow.png" id="7_ff1qe"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/NextIcon.gd" id="8_6klkf"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/TestimonyIndicator.gd" id="9_qn57o"]
+[ext_resource type="Texture2D" uid="uid://duiwmtkukd3fl" path="res://ui/chat_arrow.png" id="11_20bv3"]
+[ext_resource type="Texture2D" uid="uid://d7jd6dkql3pd" path="res://ui/tone.png" id="11_gwf1b"]
+
+[sub_resource type="Gradient" id="Gradient_3lllk"]
+offsets = PackedFloat32Array(0.517928, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.690196, 0.690196, 0.690196, 0.333333)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_c6dad"]
+gradient = SubResource("Gradient_3lllk")
 
 [sub_resource type="Animation" id="Animation_kgtpt"]
 resource_name = "spin"
@@ -49,14 +60,14 @@ loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("NextIcon:position")
+tracks/0/path = NodePath("MainBox/Control/NextIcon:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0, 0.2),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
-"values": [Vector2(1242, 206), Vector2(1258, 206)]
+"values": [Vector2(0, 0), Vector2(16, 0)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6xh4b"]
@@ -71,7 +82,7 @@ step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath(".:modulate")
+tracks/0/path = NodePath("MainBox:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -83,14 +94,14 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath(".:position")
+tracks/1/path = NodePath("MainBox:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0, 0.5),
 "transitions": PackedFloat32Array(2, 2),
 "update": 0,
-"values": [Vector2(0, 485), Vector2(0, 725)]
+"values": [Vector2(0, 0), Vector2(0, 485)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_4ba8a"]
@@ -98,98 +109,166 @@ _data = {
 "fade": SubResource("Animation_sx2iy")
 }
 
-[node name="DialogBox" type="Control" node_paths=PackedStringArray("showname_label", "dialog_label") groups=["save"]]
+[node name="DialogBox" type="Control" node_paths=PackedStringArray("showname_label", "dialog_label", "next_icon", "visual_box") groups=["save"]]
 layout_mode = 3
 anchor_top = 0.674
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -0.280029
+offset_top = -2.92004
+offset_bottom = -2.99951
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-theme = ExtResource("3_6aa05")
+theme = ExtResource("1_eo6rx")
 script = ExtResource("1_xumso")
-showname_label = NodePath("Showname/MarginContainer/HBoxContainer/RichTextLabel")
-dialog_label = NodePath("Dialog/MarginContainer/RichTextLabel")
+showname_label = NodePath("MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/MarginContainer/RichTextLabel")
+dialog_label = NodePath("MainBox/DialogContainer/RichTextLabel")
 blip_sound = ExtResource("2_g5520")
+next_icon = NodePath("MainBox/Control/NextIcon")
+visual_box = NodePath("MainBox/VisualBox")
 
-[node name="Dialog" type="PanelContainer" parent="."]
+[node name="MainBox" type="Control" parent="."]
+layout_mode = 1
+anchor_top = 0.119318
+anchor_right = 1.0
+anchor_bottom = 0.999997
+offset_bottom = 0.000732422
+grow_horizontal = 2
+grow_vertical = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VisualBox" type="Control" parent="MainBox"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DialogBackground" type="PanelContainer" parent="MainBox/VisualBox"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 58.0
+offset_left = -21.0
+offset_top = 84.0
+offset_right = 21.0
+offset_bottom = 22.9999
 grow_vertical = 0
 mouse_filter = 1
 
-[node name="MarginContainer" type="MarginContainer" parent="Dialog"]
+[node name="chat_bg" type="TextureRect" parent="MainBox/VisualBox/DialogBackground"]
+unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 6
-theme_override_constants/margin_right = 32
-theme_override_constants/margin_bottom = 20
+texture = ExtResource("4_86erc")
+expand_mode = 1
+stretch_mode = 6
 
-[node name="ReferenceRect" type="ReferenceRect" parent="Dialog/MarginContainer"]
+[node name="chat_speedlines" type="TextureRect" parent="MainBox/VisualBox/DialogBackground"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
 layout_mode = 2
-mouse_filter = 1
+texture = ExtResource("5_hi6kt")
+expand_mode = 1
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Dialog/MarginContainer"]
+[node name="LineAnchor" type="Control" parent="MainBox/VisualBox/DialogBackground"]
 layout_mode = 2
-mouse_filter = 1
-bbcode_enabled = true
-text = "Press \"Enter\" to progress a test timeline. Lorem Ipsum...... Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum .....Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum Lorem Ipsum "
-scroll_active = false
-visible_characters_behavior = 1
 
-[node name="Showname" type="PanelContainer" parent="."]
+[node name="GradientLine" type="TextureRect" parent="MainBox/VisualBox/DialogBackground/LineAnchor"]
 layout_mode = 1
 anchors_preset = -1
-offset_left = 12.0
-offset_top = 1.0
-offset_right = 363.0
-offset_bottom = 58.0
+anchor_right = 1.0
+offset_bottom = 4.0
+texture = SubResource("GradientTexture1D_c6dad")
+
+[node name="Showname" type="PanelContainer" parent="MainBox/VisualBox" node_paths=PackedStringArray("showname_label")]
+layout_mode = 1
+anchors_preset = -1
+offset_left = -21.0
+offset_top = -8.64001
+offset_right = 498.0
+offset_bottom = 98.36
 grow_vertical = 0
 mouse_filter = 1
+theme_override_styles/panel = ExtResource("4_wqbrc")
 script = ExtResource("4_fcl71")
-showname = "Showname is Here"
+showname_label = NodePath("MarginContainer/HBoxContainer/MarginContainer/RichTextLabel")
+showname = "Quinn Specter"
 
-[node name="MarginContainer" type="MarginContainer" parent="Showname"]
+[node name="MarginContainer" type="MarginContainer" parent="MainBox/VisualBox/Showname"]
 layout_mode = 2
-theme_override_constants/margin_right = 3
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 12
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Showname/MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainBox/VisualBox/Showname/MarginContainer"]
 layout_mode = 2
 
-[node name="Control" type="Control" parent="Showname/MarginContainer/HBoxContainer"]
+[node name="Tone" type="TextureRect" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
+layout_mode = 2
+texture = ExtResource("11_gwf1b")
+
+[node name="DiamondOffset" type="MarginContainer" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_right = 22
+
+[node name="Control" type="Control" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(45, 45)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="NameIcon" type="TextureRect" parent="Showname/MarginContainer/HBoxContainer/Control"]
-custom_minimum_size = Vector2(45, 45)
-layout_mode = 2
-offset_right = 45.0
-offset_bottom = 45.0
+[node name="AnimPivot" type="Control" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -22.5
+offset_top = -22.5
+offset_right = 22.5
+offset_bottom = 22.5
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="NameIcon" type="TextureRect" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control/AnimPivot"]
+custom_minimum_size = Vector2(45, 45)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -21.5
+offset_top = -22.5
+offset_right = 23.5
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+rotation = 1.5708
 pivot_offset = Vector2(22, 22)
 texture = ExtResource("5_u2r35")
 expand_mode = 1
 script = ExtResource("6_krw2h")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="Showname/MarginContainer/HBoxContainer/Control/NameIcon"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control/AnimPivot/NameIcon"]
 libraries = {
 "": SubResource("AnimationLibrary_xm3xt")
 }
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Showname/MarginContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 6
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/MarginContainer"]
 layout_mode = 2
 mouse_filter = 1
-text = "Showname is Here"
+text = "Quinn Specter"
 fit_content = true
 autowrap_mode = 0
 
-[node name="ReferenceRect2" type="ReferenceRect" parent="Showname/MarginContainer/HBoxContainer/RichTextLabel"]
+[node name="ReferenceRect" type="ReferenceRect" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/MarginContainer/RichTextLabel"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -199,37 +278,67 @@ grow_vertical = 2
 mouse_filter = 1
 border_width = 2.0
 
-[node name="NextIcon" type="TextureRect" parent="."]
-custom_minimum_size = Vector2(22, 22)
+[node name="DialogContainer" type="MarginContainer" parent="MainBox"]
+layout_mode = 2
+offset_top = 86.0
+offset_right = 1920.0
+offset_bottom = 302.0
+theme_override_constants/margin_left = 110
+theme_override_constants/margin_top = 50
+theme_override_constants/margin_right = 52
+theme_override_constants/margin_bottom = 50
+
+[node name="ReferenceRect" type="ReferenceRect" parent="MainBox/DialogContainer"]
+layout_mode = 2
+mouse_filter = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="MainBox/DialogContainer"]
+layout_mode = 2
+mouse_filter = 1
+bbcode_enabled = true
+text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor sussy incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida."
+scroll_active = false
+visible_characters_behavior = 1
+
+[node name="Control" type="Control" parent="MainBox"]
 layout_mode = 1
 anchors_preset = 3
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -38.0
-offset_top = -29.0
-offset_right = -16.0
-offset_bottom = -7.0
+offset_left = -69.0
+offset_top = -44.0012
+offset_bottom = 2.99878
 grow_horizontal = 0
 grow_vertical = 0
-texture = ExtResource("7_ff1qe")
+
+[node name="NextIcon" type="TextureRect" parent="MainBox/Control"]
+custom_minimum_size = Vector2(48, 39)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -69.0
+offset_top = -47.0
+offset_right = -21.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+texture = ExtResource("11_20bv3")
 expand_mode = 1
 script = ExtResource("8_6klkf")
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="NextIcon"]
-root_node = NodePath("../..")
+[node name="AnimationPlayer" type="AnimationPlayer" parent="MainBox/Control/NextIcon"]
+root_node = NodePath("../../../..")
 libraries = {
 "": SubResource("AnimationLibrary_6xh4b")
 }
 autoplay = "next"
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_4ba8a")
-}
-
-[node name="TestimonyIndicator" type="PanelContainer" parent="."]
+[node name="TestimonyIndicator" type="PanelContainer" parent="MainBox"]
 visible = false
 layout_mode = 1
 anchors_preset = 7
@@ -237,28 +346,70 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -224.0
-offset_right = 20.0
-offset_bottom = -184.0
+offset_left = -14.0
+offset_top = -330.0
+offset_right = 26.0
+offset_bottom = -290.0
 grow_horizontal = 2
 grow_vertical = 0
 mouse_filter = 1
 script = ExtResource("9_qn57o")
 
-[node name="MarginContainer" type="MarginContainer" parent="TestimonyIndicator"]
+[node name="MarginContainer" type="MarginContainer" parent="MainBox/TestimonyIndicator"]
 layout_mode = 2
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
 theme_override_constants/margin_bottom = 6
 
-[node name="Container" type="HBoxContainer" parent="TestimonyIndicator/MarginContainer"]
+[node name="Container" type="HBoxContainer" parent="MainBox/TestimonyIndicator/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 8
+
+[node name="DEBUG" type="Control" parent="MainBox"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ShakeMe" type="Button" parent="MainBox/DEBUG"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -129.0
+offset_bottom = 67.0
+grow_horizontal = 0
+text = "Shake"
+
+[node name="ShakeMeOptions" type="OptionButton" parent="MainBox/DEBUG"]
+unique_name_in_owner = true
+layout_mode = 0
+offset_left = 1568.0
+offset_right = 1613.0
+offset_bottom = 20.0
+item_count = 4
+selected = 0
+popup/item_0/text = "Light"
+popup/item_0/id = 0
+popup/item_1/text = "Medium"
+popup/item_1/id = 1
+popup/item_2/text = "Strong"
+popup/item_2/id = 2
+popup/item_3/text = "Intense"
+popup/item_3/id = 3
 
 [node name="BlipPlayer" type="AudioStreamPlayer" parent="."]
 max_polyphony = 3
 
-[connection signal="message_set" from="." to="Showname/MarginContainer/HBoxContainer/Control/NameIcon" method="_on_dialog_box_message_set"]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4ba8a")
+}
+
+[connection signal="message_set" from="." to="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control/AnimPivot/NameIcon" method="_on_dialog_box_message_set"]
+[connection signal="pressed" from="MainBox/DEBUG/ShakeMe" to="." method="_on_shake_me_pressed"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_animation_player_animation_started"]

@@ -405,13 +405,33 @@ func clear_choices():
 
 func get_savedict() -> Dictionary:
 	var save_dict = {
-		"timeline": command_manager.current_collection.get_path(),
-		"current_command_idx": command_manager.current_command_idx,
+		"main_collection": command_manager.main_collection.resource_path,
+		"current_collection": command_manager.current_collection.resource_path,
+		"current_command_idx": command_manager.current_command_position,
 		"flags": flags,
-		"history": command_manager._history,
-		"jump_history": command_manager._jump_history,
 		"background": current_background,
+		"history": [],
+		"jump_history": [],
 	}
+
+	# Process the history so it's saved not as object, but as paths
+	var history = []
+	for value in command_manager._history:
+		var new_value = value.duplicate()
+		new_value[command_manager._HistoryData.COLLECTION] = new_value[command_manager._HistoryData.COLLECTION].resource_path
+		print(new_value)
+		history.append(new_value)
+	save_dict["history"] = history
+	
+	# Process the jump history so it's saved not as object, but as paths
+	var jump_history = []
+	for value in command_manager._jump_history:
+		var new_value = value.duplicate()
+		new_value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION] = new_value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION].resource_path
+		new_value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION] = new_value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION].resource_path
+		jump_history.append(new_value)
+	save_dict["jump_history"] = jump_history
+
 	return save_dict
 
 
@@ -419,19 +439,30 @@ func load_savedict(save_dict: Dictionary):
 	if command_manager.current_command:
 		command_manager._disconnect_command_signals(command_manager.current_command)
 	for key in save_dict.keys():
-		if key == "timeline":
+		if key == "main_collection":
+			command_manager.main_collection = load(save_dict[key])
+		if key == "current_collection":
 			command_manager.current_collection = load(save_dict[key])
 		if key == "current_command_idx":
-			command_manager.current_command_idx = save_dict[key]
+			command_manager.current_command_position = save_dict[key]
 		if key == "flags":
 			flags = save_dict[key]
 		if key == "history":
-			command_manager._history = save_dict[key]
+			var history = []
+			for value in save_dict[key]:
+				value[command_manager._HistoryData.COLLECTION] = load(value[command_manager._HistoryData.COLLECTION])
+				history.append(value)
+			command_manager._history = history
 		if key == "jump_history":
-			command_manager._jump_history = save_dict[key]
+			var jump_history = []
+			for value in save_dict[key]:
+				value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION] = load(value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION])
+				value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION] = load(value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION])
+				jump_history.append(value)
+			command_manager._jump_history = jump_history
 		if key == "background":
 			set_background(save_dict[key])
-	command_manager.start(null, command_manager.current_command_idx)
+	command_manager.go_to_command(command_manager.current_command_position)
 
 
 func evidence_exists(evidence_name: String):
