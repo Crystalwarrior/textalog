@@ -98,13 +98,13 @@ func set_emote(emote):
 
 func start_talking():
 	is_talking = true
-	if talk_animationplayer:
+	if talk_animationplayer and talk_animationplayer.has_animation(talk_prefix + "_talk"):
 		talk_animationplayer.play(talk_prefix + "_talk")
 
 
 func stop_talking():
 	is_talking = false
-	if talk_animationplayer:
+	if talk_animationplayer and talk_animationplayer.has_animation(talk_prefix + "_silent"):
 		talk_animationplayer.play(talk_prefix + "_silent")
 
 
