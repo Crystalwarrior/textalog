@@ -18,12 +18,12 @@ func remove_evidence(evidence):
 			child.queue_free()
 
 
-func add_evidence(evidence_dict):
+func add_evidence(evidence: Evidence):
 	var new_evidence = evidence_piece.instantiate()
 	evidence_container.add_child(new_evidence)
-	new_evidence.name = evidence_dict["name"]
-	new_evidence.title.text = evidence_dict["name"]
-	new_evidence.icon.texture = evidence_dict["icon"]
+	new_evidence.name = evidence.name
+	new_evidence.title.text = evidence.name
+	new_evidence.icon.texture = evidence.image
 	new_evidence.select.connect(select_evidence.bind(new_evidence.get_index()))
 
 

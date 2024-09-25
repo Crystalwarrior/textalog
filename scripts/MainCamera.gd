@@ -17,11 +17,11 @@ var trauma_power = 2  # Trauma exponent. Use [2, 3].
 func _unhandled_input(event):
 	if not point_collection:
 		return
-	if event.is_action_pressed("previous"):
+	if event.is_action_pressed("ui_left"):
 		var idx = (current_point.get_index() - 1) % point_collection.get_children().size()
 		var point = point_collection.get_child(idx)
 		set_campoint(point)
-	if event.is_action_pressed("next"):
+	if event.is_action_pressed("ui_right"):
 		var idx = abs((current_point.get_index() + 1) % point_collection.get_children().size())
 		var point = point_collection.get_child(idx)
 		set_campoint(point)
@@ -40,7 +40,7 @@ func _process(delta):
 		shake()
 
 
-func set_campoint(point):
+func set_campoint(point, duration: float = 0.75):
 	if not point_collection:
 		return
 
@@ -48,7 +48,7 @@ func set_campoint(point):
 		point = point_collection.get_child(point)
 	current_point = point
 	var scale_to = Vector2(1,1) / current_point.scale
-	zoom_to(current_point.global_position, scale_to, 0.2)
+	zoom_to(current_point.global_position, scale_to, duration)
 
 
 func shake():
@@ -70,6 +70,10 @@ func zoom_to(target_pos: Vector2, target_zoom: Vector2 = Vector2(1, 1), duration
 	if zoomtween:
 #		zoomtween.custom_step(9999)
 		zoomtween.kill()
+	if duration <= 0:
+		global_position = target_pos
+		zoom = target_zoom
+		return
 	zoomtween = create_tween()
-	zoomtween.tween_property(self, "global_position", target_pos, duration).set_trans(Tween.TRANS_SINE)
-	zoomtween.parallel().tween_property(self, "zoom", target_zoom, duration).set_trans(Tween.TRANS_SINE)
+	zoomtween.tween_property(self, "global_position", target_pos, duration).set_trans(Tween.TRANS_QUINT)
+	zoomtween.parallel().tween_property(self, "zoom", target_zoom, duration).set_trans(Tween.TRANS_QUINT)

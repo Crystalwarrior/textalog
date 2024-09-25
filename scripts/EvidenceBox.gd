@@ -5,7 +5,7 @@ extends Control
 @onready var icon = $MarginContainer/HBoxContainer/Icon
 
 
-func set_evidence(evidence_dict):
-	title.text = evidence_dict["name"]
-	desc.text = evidence_dict["desc"]
-	icon.texture = evidence_dict["icon"]
+func set_evidence(evidence: Evidence):
+	title.text = evidence.name
+	desc.text = evidence.long_desc
+	icon.texture = evidence.image

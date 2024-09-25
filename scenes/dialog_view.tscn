@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cf117tt2n5op"]
+[gd_scene load_steps=29 format=3 uid="uid://cf117tt2n5op"]
 
 [ext_resource type="Script" path="res://addons/textalog/scripts/dialog_view.gd" id="1_slus5"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/CanvasModulate.gd" id="2_c7ej6"]
@@ -113,6 +113,11 @@ _data = {
 "shake": SubResource("Animation_co4ww")
 }
 
+[sub_resource type="LabelSettings" id="LabelSettings_eomn3"]
+font_size = 32
+outline_size = 8
+outline_color = Color(0.125911, 0.125911, 0.125911, 1)
+
 [sub_resource type="Shader" id="Shader_gibmv"]
 code = "/* 
 Earthbound battle backgrounds shader with scrolling effect and palette cycling like in the original game.
@@ -188,14 +193,6 @@ command_node_fallback_path = NodePath("..")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("5_e63f1")
-
-[node name="CG" type="TextureRect" parent="HUD"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="noise" type="TextureRect" parent="HUD"]
 visible = false
@@ -400,6 +397,15 @@ libraries = {
 "": SubResource("AnimationLibrary_ltusf")
 }
 autoplay = "shake"
+
+[node name="DebugInfoLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 353.0
+offset_bottom = 53.0
+label_settings = SubResource("LabelSettings_eomn3")
 
 [node name="Background" type="Control" parent="."]
 layout_mode = 1
