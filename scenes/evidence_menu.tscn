@@ -97,6 +97,7 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 32
 text = "⬇💼⬇"
 
+[connection signal="show_pressed" from="EvidenceViewer" to="." method="_on_show_button_pressed"]
 [connection signal="selected_evidence" from="VBoxContainer/EvidencePullout/EvidenceScroller" to="." method="_on_evidence_scroller_selected_evidence"]
 [connection signal="selected_evidence" from="VBoxContainer/EvidencePullout/NotesScroller" to="." method="_on_notes_scroller_selected"]
 [connection signal="toggled" from="VBoxContainer/EvidencePullout/EvidenceToggle" to="." method="_on_evidence_toggled"]

@@ -1,18 +1,10 @@
 [gd_scene load_steps=7 format=3 uid="uid://blcnrwa257bbd"]
 
-[ext_resource type="Script" path="res://addons/textalog/scripts/EvidenceBox.gd" id="1_dujsa"]
+[ext_resource type="Script" path="res://addons/textalog/scenes/evidence_viewer.gd" id="1_gads0"]
 [ext_resource type="Texture2D" uid="uid://chh77oerj3v34" path="res://addons/textalog/ui/bg.png" id="2_h2ipo"]
 
 [sub_resource type="Theme" id="Theme_5p707"]
 default_font_size = 32
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qoukc"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_blend = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5fccy"]
 draw_center = false
@@ -30,6 +22,14 @@ border_width_right = 8
 border_width_bottom = 8
 border_color = Color(0.552748, 0.8738, 0.891734, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qoukc"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_blend = true
+
 [node name="EvidenceViewer" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -37,9 +37,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_gads0")
 
 [node name="EvidenceBox" type="PanelContainer" parent="."]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -53,7 +53,6 @@ offset_bottom = 31.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_5p707")
-script = ExtResource("1_dujsa")
 metadata/_edit_group_ = true
 
 [node name="MarginContainer" type="MarginContainer" parent="EvidenceBox"]
@@ -78,6 +77,7 @@ offset_bottom = 318.0
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="EvidenceBox/MarginContainer/HBoxContainer/Control/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 theme_override_font_sizes/font_size = 48
@@ -89,6 +89,7 @@ size_flags_vertical = 3
 theme_override_constants/margin_left = 16
 
 [node name="RichTextLabel" type="RichTextLabel" parent="EvidenceBox/MarginContainer/HBoxContainer/Control/VBoxContainer/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -99,6 +100,7 @@ THIRD LINE#?!?!?!?!? OMfg isn't that a lil...
 OVERKILL!?!?!?!? 4th LINE BABYYYYYYYYYYYY"
 
 [node name="Icon" type="TextureRect" parent="EvidenceBox/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 texture = ExtResource("2_h2ipo")
 expand_mode = 2
@@ -113,6 +115,8 @@ offset_bottom = 571.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
-theme_override_styles/normal = SubResource("StyleBoxFlat_qoukc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5fccy")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ur6ks")
+theme_override_styles/normal = SubResource("StyleBoxFlat_qoukc")
+
+[connection signal="pressed" from="ShowButton" to="." method="_on_show_button_pressed"]

@@ -17,6 +17,8 @@ signal message_end()
 
 @export var visual_box: Control
 
+@export var testimony_indicator: Control
+
 # Text Speed constants
 # TODO: make "decay" decide *how long* the shake lasts rather than being nebulous as it is right now
 const SHAKE_INTENSITIES: Array = [

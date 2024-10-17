@@ -1,8 +1,8 @@
 extends Node
 
-@onready var dialogbox = $HUD/MainView/DialogBox
+@onready var dialogbox = %DialogBox
 @onready var command_manager: CommandProcessor = $CommandManager
-@onready var testimony_indicator = $HUD/MainView/DialogBox/TestimonyIndicator
+@onready var testimony_indicator = dialogbox.testimony_indicator
 @onready var characters_node = $Characters
 @onready var backgrounds = $Background
 @onready var canvas_modulate = $CanvasModulate
@@ -21,7 +21,7 @@ const ChoiceListCommand = preload("res://addons/textalog/commands/command_choice
 var auto = false:
 	set(val):
 		auto = val
-		$HUD/MainView/DialogBox/NextIcon.modulate = Color.YELLOW if auto else Color.WHITE
+		dialogbox.next_icon.modulate = Color.YELLOW if auto else Color.WHITE
 
 var auto_delay: float = 1.2
 
@@ -66,19 +66,13 @@ signal evidence_shown(index)
 func _process_testimony(event):
 	if event.is_action_pressed("next"):
 		get_viewport().set_input_as_handled()
-		get_window().gui_release_focus()
 		next()
 	elif event.is_action_pressed("previous"):
-		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
 		if not waiting_on_input:
 			dialogbox.skip()
 		else:
 			go_to_previous_statement()
-	elif event.is_action_pressed("press") and current_press:
-		get_window().gui_release_focus()
-		get_viewport().set_input_as_handled()
-		press()
 
 
 func _process_timeline(event):
@@ -99,10 +93,14 @@ func next():
 	get_window().gui_release_focus()
 	if not waiting_on_input:
 		dialogbox.skip()
+		return
 	if hide_dialog_after_input:
 		dialogbox.hide()
-	elif not pause_testimony and not testimony.is_empty():
-		go_to_next_statement()
+	elif (not pause_testimony or finished) and not testimony.is_empty():
+		if not pause_testimony or next_statement_on_pause:
+			go_to_next_statement()
+		else:
+			go_to_statement(current_testimony_index)
 	elif not finished:
 		if not command_manager.main_collection:
 			command_manager.start()
@@ -223,7 +221,7 @@ func go_to_statement(index: int):
 	var command_bookmark = testimony[current_testimony_index]
 	var target_command = testimony_timeline.get_command_by_bookmark(command_bookmark)
 	var command_index = testimony_timeline.get_command_absolute_position(target_command)
-	command_manager.go_to_command_in_collection(command_index, testimony_timeline)
+	command_manager.jump_to_command(command_index, testimony_timeline)
 
 
 func set_statements(statements: PackedStringArray):
@@ -235,6 +233,7 @@ func start_testimony(statements: PackedStringArray = []):
 	pause_testimony = false
 	current_testimony_index = 0
 	testimony_timeline = command_manager.current_collection
+	print(statements)
 	if not statements.is_empty():
 		set_statements(statements)
 	go_to_statement(current_testimony_index)
@@ -304,8 +303,9 @@ func dialog(dialog_command:DialogCommand) -> void:
 
 	# Pause until dialog finishes processing
 	if wait_until_finished:
+		print("Await ye mateys: " + dialog)
 		await dialog_finished
-
+	print("Paid off...")
 	if chara:
 		chara.stop_talking()
 
@@ -327,6 +327,7 @@ func character(character_command:CharacterCommand) -> void:
 	var to_position: Vector2 = character_command.to_position
 	var zoom_duration: float = character_command.zoom_duration
 	var flipped: bool = character_command.flipped
+	var bounce: bool = character_command.bounce
 	var flip_duration: float = character_command.flip_duration
 	var shaking:bool = character_command.shaking
 	var set_z_index:int = character_command.set_z_index
@@ -354,6 +355,8 @@ func character(character_command:CharacterCommand) -> void:
 	target.z_index = set_z_index
 	target.flip_h(flipped, flip_duration)
 	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
+	if bounce:
+		target.bounce()
 	# If we wait until finished, remember tell the timeline to continue
 	if wait_until_finished:
 		if target.waiting_on_animations > 0:
@@ -375,11 +378,12 @@ func evidence(evidence_command:EvidenceCommand) -> void:
 		EvidenceCommand.Action.ADD_EVIDENCE:
 			evidence_menu.add(evidence_command.evidence)
 		EvidenceCommand.Action.ERASE_EVIDENCE:
-			evidence_menu.evidence_list.erase(evidence_command.evidence)
+			evidence_menu.erase_evidence(evidence_command.evidence)
 		EvidenceCommand.Action.INSERT_AT_INDEX:
-			evidence_menu.evidence_list.insert(evidence_command.at_index, evidence_command.evidence)
+			push_error("Not implemented!")
+			#evidence_menu.evidence_list.insert(evidence_command.at_index, evidence_command.evidence)
 		EvidenceCommand.Action.REMOVE_AT_INDEX:
-			evidence_menu.evidence_list.remove_at(evidence_command.at_index)
+			evidence_menu.remove_evidence_index(evidence_command.at_index)
 
 
 func set_flag(flag: String, val: Variant):
@@ -530,19 +534,20 @@ func _on_dialog_box_message_end():
 
 
 func _on_show_evidence(index):
+	waiting_on_input = false
 	pause_testimony = true
 	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	$HUD/EvidenceMenu/EvidenceToggle.button_pressed = false
-
+	print("WOAH")
 	last_shown_evidence = index
 	evidence_shown.emit(index)
 
+	print(current_present)
 	if current_present == null:
 		return
 	#command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.jump_to_command(0, current_present)
+	command_manager.go_to_command_in_collection(0, current_present)
 
 
 func _on_evidence_menu_show_evidence(index):

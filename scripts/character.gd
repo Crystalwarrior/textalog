@@ -61,8 +61,19 @@ func bump():
 		bumptween.custom_step(10000)
 		bumptween.kill()
 	bumptween = create_tween()
-	bumptween.tween_property(sprite_group, "position:y", sprite_group.position.y - 3, 0.1)
+	bumptween.tween_property(sprite_group, "position:y", sprite_group.position.y - 16, 0.1)
 	bumptween.tween_property(sprite_group, "position:y", sprite_group.position.y, 0.1)
+
+func bounce(duration: float = 0.2):
+	if bumptween:
+		bumptween.custom_step(10000)
+		bumptween.kill()
+	bumptween = create_tween()
+	bumptween.tween_property(sprite_group, "scale:y", sprite_group.scale.y / 1.02, duration/3)
+	bumptween.tween_property(sprite_group, "scale:y", sprite_group.scale.y * 1.02, duration/3)
+	bumptween.tween_property(sprite_group, "scale:y", sprite_group.scale.y, duration/3)
+	#bumptween.tween_property(sprite_group, "position:y", sprite_group.position.y - 16, 0.1)
+	#bumptween.tween_property(sprite_group, "position:y", sprite_group.position.y, 0.1)
 
 
 func flip_h(tog: bool = true, duration: float = 0.2):

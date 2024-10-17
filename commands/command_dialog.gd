@@ -162,4 +162,3 @@ func _init() -> void:
 
 func _get_category() -> StringName:
 	return &"Textalog"
-

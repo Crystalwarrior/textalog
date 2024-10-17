@@ -12,9 +12,9 @@ func clear_evidence():
 		child.queue_free()
 
 
-func remove_evidence(evidence):
+func remove_evidence(evidence_name):
 	for child in evidence_container.get_children():
-		if child == evidence or child.name == evidence:
+		if child.name == evidence_name:
 			child.queue_free()
 
 
@@ -24,7 +24,7 @@ func add_evidence(evidence: Evidence):
 	new_evidence.name = evidence.name
 	new_evidence.title.text = evidence.name
 	new_evidence.icon.texture = evidence.image
-	new_evidence.select.connect(select_evidence.bind(new_evidence.get_index()))
+	new_evidence.select.connect(select_evidence.bind(new_evidence))
 
 
 func deselect():
@@ -33,7 +33,8 @@ func deselect():
 	selected_evidence.emit(-1)
 
 
-func select_evidence(index):
+func select_evidence(evidence_piece):
+	var index = evidence_piece.get_index()
 	if index < 0:
 		deselect()
 		return

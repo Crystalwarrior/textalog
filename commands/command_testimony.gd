@@ -56,4 +56,3 @@ func _notification(what: int) -> void:
 
 func _get_category() -> StringName:
 	return &"Textalog"
-

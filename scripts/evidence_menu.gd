@@ -5,7 +5,6 @@ signal show_evidence(index)
 @onready var gray_out := %GrayOut
 
 @onready var viewer := %EvidenceViewer
-@onready var viewer_box := %EvidenceBox
 
 @onready var evidence_scroller := %EvidenceScroller
 @onready var evidence_toggle := %EvidenceToggle
@@ -25,6 +24,8 @@ func deselect_all():
 
 func _on_show_button_pressed():
 	show_evidence.emit(current_selected_evidence)
+	_on_expand_collapse_button_pressed()
+	_on_evidence_scroller_selected_evidence(-1)
 
 
 func add(evidence: Evidence, is_note=false):
@@ -43,12 +44,24 @@ func clear_evidence():
 	evidence_scroller.clear_evidence()
 
 
-func remove_evidence(evidence_name):
+func remove_evidence_index(index):
+	var evidence = evidence_list[index]
+	if not evidence:
+		return
+	erase_evidence(evidence)
+
+
+func remove_evidence_name(evidence_name):
 	var evidence = find_name(evidence_name)
 	if not evidence:
 		return
-	evidence_list -= [evidence]
-	evidence_scroller.remove_evidence(evidence)
+	erase_evidence(evidence)
+
+
+func erase_evidence(evidence):
+	deselect_all()
+	evidence_list.erase(evidence)
+	evidence_scroller.remove_evidence(evidence.name)
 
 
 func find_name(evidence_name):
@@ -84,7 +97,7 @@ func _on_evidence_scroller_selected_evidence(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_evidence(evidence_list[index])
+		viewer.set_data(evidence_list[index])
 
 
 func _on_evidence_toggled(toggled_on):
@@ -145,7 +158,7 @@ func _on_note_scroller_selected_note(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_note(notes_list[index])
+		viewer.set_data(notes_list[index])
 
 
 func _on_notes_scroller_selected(index):
@@ -153,7 +166,7 @@ func _on_notes_scroller_selected(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_evidence(notes_list[index])
+		viewer.set_data(notes_list[index])
 
 
 func _on_notes_toggled(toggled_on):

@@ -20,9 +20,3 @@ class_name Evidence
 		emit_changed()
 	get:
 		return short_desc
-@export_multiline var long_desc: String = "Long Description Here":
-	set(value):
-		long_desc = value
-		emit_changed()
-	get:
-		return long_desc

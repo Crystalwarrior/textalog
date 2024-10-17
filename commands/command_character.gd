@@ -62,6 +62,15 @@ extends Command
 		emit_changed()
 	get:
 		return flipped
+
+# TODO: bounce without the flip
+@export var bounce: bool = false:
+	set(value):
+		bounce = value
+		emit_changed()
+	get:
+		return bounce
+
 ## How long it takes for the flip bounce animation to play
 @export var flip_duration: float = 0.15:
 	set(value):
@@ -140,6 +149,8 @@ func _get_hint() -> String:
 		hint_str += " over " + String.num(zoom_duration, 4) + " seconds"
 	if flipped:
 		hint_str += ", flipped"
+	if bounce:
+		hint_str += ", bouncing"
 	if shaking:
 		hint_str += ", shaking"
 	if fade_duration != 0:

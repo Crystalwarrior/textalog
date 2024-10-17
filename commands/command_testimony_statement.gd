@@ -69,10 +69,12 @@ func get_next_command_position() -> int:
 	var owner := get_command_owner()
 	if not owner:
 		# There's no command owner defined?
+		assert(false)
 		return -1
 	
 	# No more commands?
 	if owner is Blockflow.CommandCollectionClass:
+		assert(false)
 		return -1
 
 	if owner.current_statement == index:
@@ -89,6 +91,7 @@ func get_next_command_position() -> int:
 	while owner_sibling == null:
 		owner = owner.get_command_owner()
 		if owner == null or owner is Blockflow.CommandCollectionClass:
+			assert(false)
 			return -1
 		owner_sibling = owner.get_next_available_command()
 	
@@ -97,4 +100,3 @@ func get_next_command_position() -> int:
 
 func _get_category() -> StringName:
 	return &"Textalog"
-
