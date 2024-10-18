@@ -25,6 +25,7 @@ func add_choice(title, disabled = false):
 	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	button.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	button.disabled = disabled
+	button.set_visible(not disabled)
 	button.pressed.connect(_on_option_pressed.bind(button))
 	container.add_child(button)
 	return button

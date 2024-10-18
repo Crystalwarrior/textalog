@@ -42,3 +42,5 @@ func on_object_clicked(obj, target_timeline: CommandCollection):
 		return
 	obj.activate()
 	object_clicked.emit(obj, target_timeline)
+	get_window().gui_release_focus()
+	get_viewport().set_input_as_handled()

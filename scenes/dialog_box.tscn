@@ -118,7 +118,7 @@ offset_top = -2.92004
 offset_bottom = -2.99951
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
+mouse_filter = 2
 theme = ExtResource("1_eo6rx")
 script = ExtResource("1_xumso")
 showname_label = NodePath("MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/MarginContainer/RichTextLabel")
@@ -136,6 +136,7 @@ anchor_bottom = 0.999997
 offset_bottom = 0.000732422
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 metadata/_edit_use_anchors_ = true
 
 [node name="VisualBox" type="Control" parent="MainBox"]
@@ -145,6 +146,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="DialogBackground" type="PanelContainer" parent="MainBox/VisualBox"]
 layout_mode = 1
@@ -156,11 +158,12 @@ offset_top = 84.0
 offset_right = 21.0
 offset_bottom = 22.9999
 grow_vertical = 0
-mouse_filter = 1
+mouse_filter = 2
 
 [node name="chat_bg" type="TextureRect" parent="MainBox/VisualBox/DialogBackground"]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("4_86erc")
 expand_mode = 1
 stretch_mode = 6
@@ -169,17 +172,20 @@ stretch_mode = 6
 unique_name_in_owner = true
 modulate = Color(1, 1, 1, 0)
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("5_hi6kt")
 expand_mode = 1
 
 [node name="LineAnchor" type="Control" parent="MainBox/VisualBox/DialogBackground"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="GradientLine" type="TextureRect" parent="MainBox/VisualBox/DialogBackground/LineAnchor"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 offset_bottom = 4.0
+mouse_filter = 2
 texture = SubResource("GradientTexture1D_c6dad")
 
 [node name="Showname" type="PanelContainer" parent="MainBox/VisualBox" node_paths=PackedStringArray("showname_label")]
@@ -190,7 +196,7 @@ offset_top = -8.64001
 offset_right = 498.0
 offset_bottom = 98.36
 grow_vertical = 0
-mouse_filter = 1
+mouse_filter = 2
 theme_override_styles/panel = ExtResource("4_wqbrc")
 script = ExtResource("4_fcl71")
 showname_label = NodePath("MarginContainer/HBoxContainer/MarginContainer/RichTextLabel")
@@ -198,25 +204,29 @@ showname = "Quinn Specter"
 
 [node name="MarginContainer" type="MarginContainer" parent="MainBox/VisualBox/Showname"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 24
 theme_override_constants/margin_bottom = 12
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MainBox/VisualBox/Showname/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="Tone" type="TextureRect" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 texture = ExtResource("11_gwf1b")
 
 [node name="DiamondOffset" type="MarginContainer" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_right = 22
 
 [node name="Control" type="Control" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(45, 45)
 layout_mode = 2
-mouse_filter = 1
+mouse_filter = 2
 
 [node name="AnimPivot" type="Control" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control"]
 layout_mode = 1
@@ -231,6 +241,7 @@ offset_right = 22.5
 offset_bottom = 22.5
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="NameIcon" type="TextureRect" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/Control/AnimPivot"]
 custom_minimum_size = Vector2(45, 45)
@@ -248,6 +259,7 @@ grow_horizontal = 2
 grow_vertical = 2
 rotation = 1.5708
 pivot_offset = Vector2(22, 22)
+mouse_filter = 2
 texture = ExtResource("5_u2r35")
 expand_mode = 1
 script = ExtResource("6_krw2h")
@@ -259,12 +271,13 @@ libraries = {
 
 [node name="MarginContainer" type="MarginContainer" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 6
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainBox/VisualBox/Showname/MarginContainer/HBoxContainer/MarginContainer"]
 layout_mode = 2
-mouse_filter = 1
+mouse_filter = 2
 text = "Quinn Specter"
 fit_content = true
 autowrap_mode = 0
@@ -276,7 +289,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
+mouse_filter = 2
 border_width = 2.0
 
 [node name="DialogContainer" type="MarginContainer" parent="MainBox"]
@@ -284,6 +297,7 @@ layout_mode = 2
 offset_top = 86.0
 offset_right = 1920.0
 offset_bottom = 302.0
+mouse_filter = 2
 theme_override_constants/margin_left = 110
 theme_override_constants/margin_top = 50
 theme_override_constants/margin_right = 52
@@ -291,11 +305,11 @@ theme_override_constants/margin_bottom = 50
 
 [node name="ReferenceRect" type="ReferenceRect" parent="MainBox/DialogContainer"]
 layout_mode = 2
-mouse_filter = 1
+mouse_filter = 2
 
 [node name="RichTextLabel" type="RichTextLabel" parent="MainBox/DialogContainer"]
 layout_mode = 2
-mouse_filter = 1
+mouse_filter = 2
 bbcode_enabled = true
 text = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doeiusmod tempor sussy incididunt ut labore et dolore magna aliqua. Quis ipsum suspendisse ultrices gravida."
 scroll_active = false
@@ -313,6 +327,7 @@ offset_top = -44.0012
 offset_bottom = 2.99878
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 2
 
 [node name="NextIcon" type="TextureRect" parent="MainBox/Control"]
 custom_minimum_size = Vector2(48, 39)
@@ -328,6 +343,7 @@ offset_right = -21.0
 offset_bottom = -8.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 2
 texture = ExtResource("11_20bv3")
 expand_mode = 1
 script = ExtResource("8_6klkf")
@@ -353,11 +369,12 @@ offset_right = 26.0
 offset_bottom = -290.0
 grow_horizontal = 2
 grow_vertical = 0
-mouse_filter = 1
+mouse_filter = 2
 script = ExtResource("9_qn57o")
 
 [node name="MarginContainer" type="MarginContainer" parent="MainBox/TestimonyIndicator"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/margin_left = 6
 theme_override_constants/margin_top = 6
 theme_override_constants/margin_right = 6
@@ -365,6 +382,7 @@ theme_override_constants/margin_bottom = 6
 
 [node name="Container" type="HBoxContainer" parent="MainBox/TestimonyIndicator/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 theme_override_constants/separation = 8
 
 [node name="DEBUG" type="Control" parent="MainBox"]

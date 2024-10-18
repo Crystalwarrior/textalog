@@ -35,3 +35,10 @@ func fadein():
 	if $DialogBox.modulate != Color.TRANSPARENT:
 		return
 	fade(-1.0, true)
+
+
+func accept_input(toggle):
+	if toggle:
+		mouse_filter = MOUSE_FILTER_STOP
+	else:
+		mouse_filter = MOUSE_FILTER_IGNORE

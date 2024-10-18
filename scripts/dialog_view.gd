@@ -74,7 +74,6 @@ func _process_testimony(event):
 		else:
 			go_to_previous_statement()
 	elif event.is_action_pressed("press"):
-		print("anus")
 		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
 		press()
@@ -100,8 +99,9 @@ func next():
 		dialogbox.skip()
 		return
 	if hide_dialog_after_input:
-		dialogbox.hide()
-	elif (not pause_testimony or finished) and not testimony.is_empty():
+		dialogbox.disappear()
+
+	if (not pause_testimony or finished) and not testimony.is_empty():
 		if not pause_testimony or next_statement_on_pause:
 			go_to_next_statement()
 		else:
@@ -232,6 +232,8 @@ func go_to_statement(index: int):
 func set_statements(statements: PackedStringArray):
 	testimony = statements
 	testimony_indicator.set_statements(testimony.size())
+	current_testimony_index = min(current_testimony_index, testimony.size()-1)
+	testimony_indicator.select_statement(current_testimony_index)
 
 
 func start_testimony(statements: PackedStringArray = []):
@@ -270,14 +272,13 @@ func set_present(timeline: String = "", allow_evidence = true, allow_notes = fal
 
 
 func press():
+	if current_press == null:
+		return
 	waiting_on_input = false
 	pause_testimony = true
 	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	print(current_press)
-	if current_press == null:
-		return
 	command_manager.go_to_command_in_collection(0, current_press)
 
 
@@ -378,9 +379,9 @@ func character(character_command:CharacterCommand) -> void:
 
 
 func choice_list(choice_list_command:ChoiceListCommand) -> void:
-	var choices = choice_list_command.choices
+	var choices = choice_list_command.collection
 	for choice in choices:
-		add_choice(choice)
+		add_choice(choice.text, not choice._condition_is_true())
 
 
 func evidence(evidence_command:EvidenceCommand) -> void:
@@ -545,18 +546,17 @@ func _on_dialog_box_message_end():
 
 
 func _on_show_evidence(index):
+	if current_present == null:
+		return
+
 	waiting_on_input = false
 	pause_testimony = true
 	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	print("WOAH")
 	last_shown_evidence = index
 	evidence_shown.emit(index)
 
-	print(current_present)
-	if current_present == null:
-		return
 	#command_manager._disconnect_command_signals(command_manager.current_command)
 	command_manager.go_to_command_in_collection(0, current_present)
 
