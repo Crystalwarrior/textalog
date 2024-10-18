@@ -73,6 +73,11 @@ func _process_testimony(event):
 			dialogbox.skip()
 		else:
 			go_to_previous_statement()
+	elif event.is_action_pressed("press"):
+		print("anus")
+		get_window().gui_release_focus()
+		get_viewport().set_input_as_handled()
+		press()
 
 
 func _process_timeline(event):
@@ -249,8 +254,11 @@ func stop_testimony():
 	testimony_indicator.set_statements(0)
 
 
-func set_press(timeline: CommandCollection = null):
-	current_press = timeline
+func set_press(timeline: String = ""):
+	if timeline == "":
+		current_press = null
+	else:
+		current_press = load(timeline)
 
 
 func set_present(timeline: String = "", allow_evidence = true, allow_notes = false):
@@ -262,12 +270,15 @@ func set_present(timeline: String = "", allow_evidence = true, allow_notes = fal
 
 
 func press():
+	waiting_on_input = false
+	pause_testimony = true
+	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	pause_testimony = true
-	next_statement_on_pause = true
-	command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.start(current_press)
+	print(current_press)
+	if current_press == null:
+		return
+	command_manager.go_to_command_in_collection(0, current_press)
 
 
 func dialog(dialog_command:DialogCommand) -> void:
