@@ -307,6 +307,10 @@ func dialog(dialog_command:DialogCommand) -> void:
 	var chara = get_character(speaking_character)
 	if chara:
 		chara.start_talking()
+		if bump_speaker:
+			chara.bump()
+		if highlight_speaker:
+			pass
 
 	if hide_dialog == HideDialog.INSTANTLY:
 		dialogbox.disappear()
@@ -381,7 +385,7 @@ func character(character_command:CharacterCommand) -> void:
 func choice_list(choice_list_command:ChoiceListCommand) -> void:
 	var choices = choice_list_command.collection
 	for choice in choices:
-		add_choice(choice.text, not choice._condition_is_true())
+		add_choice(choice.text, not choice._condition_is_true(choice_list_command.target_node))
 
 
 func evidence(evidence_command:EvidenceCommand) -> void:

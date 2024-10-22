@@ -23,14 +23,16 @@ func _execution_steps() -> void:
 	command_started.emit()
 	command_finished.emit()
 
-func _condition_is_true() -> bool:
+func _condition_is_true(node_target = null) -> bool:
 	if condition.is_empty():
 		return true
 	# Local variables. These can be added as context for condition evaluation.
 	var variables:Dictionary = {}
 	# must be a bool, but Utils.evaluate can return Variant according its input.
 	# TODO: Make sure that condition is a boolean operation
-	var evaluated_condition = Blockflow.Utils.evaluate(condition, target_node, variables)
+	if node_target == null:
+		node_target = self.target_node
+	var evaluated_condition = Blockflow.Utils.evaluate(condition, node_target, variables)
 	if (typeof(evaluated_condition) == TYPE_STRING) and (str(evaluated_condition) == condition):
 		# For some reason, your condition cannot be evaluated.
 		# Here's a few reasons:
