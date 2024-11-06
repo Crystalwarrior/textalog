@@ -67,6 +67,7 @@ func add_shake(amount):
 
 
 func zoom_to(target_pos: Vector2, target_zoom: Vector2 = Vector2(1, 1), duration: float = 1.0):
+	enabled = true
 	if zoomtween:
 #		zoomtween.custom_step(9999)
 		zoomtween.kill()

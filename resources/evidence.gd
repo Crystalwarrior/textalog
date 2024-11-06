@@ -8,6 +8,12 @@ class_name Evidence
 		emit_changed()
 	get:
 		return image
+@export var is_note: bool = false:
+	set(value):
+		is_note = value
+		emit_changed()
+	get:
+		return is_note
 @export var name: String = "Generic Object":
 	set(value):
 		name = value

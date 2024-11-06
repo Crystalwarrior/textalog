@@ -50,18 +50,21 @@ func _execution_steps() -> void:
 
 
 func _get_name() -> StringName:
+	var title = "Evidence"
+	if evidence and evidence.is_note:
+		title = "Note"
 	if not get_command_owner():
-		return "Evidence"
+		return title
 	match do_what:
 		Action.ADD_EVIDENCE:
-			return "Add Evidence"
+			return "Add " + title
 		Action.ERASE_EVIDENCE:
-			return "Erase Evidence"
+			return "Erase " + title
 		Action.INSERT_AT_INDEX:
-			return "Insert Evidence"
+			return "Insert " + title
 		Action.REMOVE_AT_INDEX:
-			return "Remove Evidence"
-	return "Evidence"
+			return "Remove " + title
+	return title
 
 
 func _get_hint() -> String:

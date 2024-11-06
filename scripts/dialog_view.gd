@@ -319,9 +319,7 @@ func dialog(dialog_command:DialogCommand) -> void:
 
 	# Pause until dialog finishes processing
 	if wait_until_finished:
-		print("Await ye mateys: " + dialog)
 		await dialog_finished
-	print("Paid off...")
 	if chara:
 		chara.stop_talking()
 
@@ -392,9 +390,12 @@ func evidence(evidence_command:EvidenceCommand) -> void:
 	# TODO: have a game data object that tracks evidence, don't let the UI keep track.
 	match evidence_command.do_what:
 		EvidenceCommand.Action.ADD_EVIDENCE:
-			evidence_menu.add(evidence_command.evidence)
+			evidence_menu.add(evidence_command.evidence, evidence_command.evidence.is_note)
 		EvidenceCommand.Action.ERASE_EVIDENCE:
-			evidence_menu.erase_evidence(evidence_command.evidence)
+			if evidence_command.evidence.is_note:
+				evidence_menu.erase_note(evidence_command.evidence)
+			else:
+				evidence_menu.erase_evidence(evidence_command.evidence)
 		EvidenceCommand.Action.INSERT_AT_INDEX:
 			push_error("Not implemented!")
 			#evidence_menu.evidence_list.insert(evidence_command.at_index, evidence_command.evidence)
@@ -509,6 +510,13 @@ func get_note_name(index: int = -1):
 	return note_name
 
 
+func has_evidence(by_name):
+	return evidence_menu.find_name(by_name) != null
+
+func has_note(by_name):
+	return evidence_menu.find_note_name(by_name) != null
+
+
 func _character_stop_talking(speaker):
 	speaker.stop_talking()
 	dialog_finished.disconnect(_character_stop_talking)
@@ -549,8 +557,10 @@ func _on_dialog_box_message_end():
 	dialog_finished.emit()
 
 
-func _on_show_evidence(index):
-	if current_present == null:
+func _on_show_evidence(index, is_note=false):
+	if not is_note and current_present == null:
+		return
+	if is_note and current_press == null:
 		return
 
 	waiting_on_input = false
@@ -562,11 +572,14 @@ func _on_show_evidence(index):
 	evidence_shown.emit(index)
 
 	#command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.go_to_command_in_collection(0, current_present)
+	if is_note:
+		command_manager.go_to_command_in_collection(0, current_press)
+	else:
+		command_manager.go_to_command_in_collection(0, current_present)
 
 
-func _on_evidence_menu_show_evidence(index):
-	_on_show_evidence(index)
+func _on_evidence_menu_show_evidence(index, is_note=false):
+	_on_show_evidence(index, is_note)
 
 
 func _on_object_clicked(obj, target_timeline: CommandCollection):

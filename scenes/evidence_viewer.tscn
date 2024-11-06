@@ -46,12 +46,13 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -499.0
-offset_top = -303.0
-offset_right = 500.0
-offset_bottom = 31.0
+offset_left = -635.0
+offset_top = -279.0
+offset_right = 639.0
+offset_bottom = 147.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 theme = SubResource("Theme_5p707")
 metadata/_edit_group_ = true
 
@@ -71,9 +72,12 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="VBoxContainer" type="VBoxContainer" parent="EvidenceBox/MarginContainer/HBoxContainer/Control"]
-layout_mode = 2
-offset_right = 661.0
-offset_bottom = 318.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="EvidenceBox/MarginContainer/HBoxContainer/Control/VBoxContainer"]
@@ -107,16 +111,18 @@ expand_mode = 2
 stretch_mode = 4
 
 [node name="ShowButton" type="Button" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 offset_left = 461.0
-offset_top = 237.0
+offset_top = 687.0
 offset_right = 1460.0
-offset_bottom = 571.0
+offset_bottom = 779.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 64
 theme_override_styles/hover = SubResource("StyleBoxFlat_5fccy")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ur6ks")
 theme_override_styles/normal = SubResource("StyleBoxFlat_qoukc")
+text = "SHOW"
 
 [connection signal="pressed" from="ShowButton" to="." method="_on_show_button_pressed"]
