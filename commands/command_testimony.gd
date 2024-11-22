@@ -8,25 +8,24 @@ extends Command
 	get:
 		return title
 
-var choice_picked
+var current_statement
 
 const StatementClass = preload("res://addons/textalog/commands/command_testimony_statement.gd")
 var generate_default_choices:bool = true
 
 func _execution_steps() -> void:
 	command_started.emit()
-	for command in collection:
-		target_node.add_choice(command.text)
-	if target_node.is_connected("choice_selected", choice_selected):
-		target_node.choice_selected.disconnect(choice_selected)
-	target_node.choice_selected.connect(
-		choice_selected,
-		CONNECT_ONE_SHOT
-	)
+	#for command in collection:
+		#target_node.add_choice(command.text)
+	#if target_node.is_connected("choice_selected", choice_selected):
+		#target_node.choice_selected.disconnect(choice_selected)
+	#target_node.choice_selected.connect(
+		#choice_selected,
+		#CONNECT_ONE_SHOT
+	#)
 
 func choice_selected(index):
-	target_node.clear_choices()
-	choice_picked = index
+	current_statement = index
 	go_to_next_command()
 
 func _get_name() -> StringName: return "Testimony"
@@ -57,4 +56,3 @@ func _notification(what: int) -> void:
 
 func _get_category() -> StringName:
 	return &"Textalog"
-

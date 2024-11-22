@@ -1,30 +1,21 @@
 extends Control
 
-signal show_evidence(index)
+signal show_evidence(index, is_note)
 
-@onready var gray_out := $GrayOut
+@onready var gray_out := %GrayOut
 
-@onready var viewer := $EvidenceViewer
-@onready var viewer_box := $EvidenceViewer/EvidenceBox
+@onready var viewer := %EvidenceViewer
 
-@onready var evidence_scroller := $EvidenceScroller
-@onready var evidence_toggle := $EvidenceToggle
+@onready var evidence_scroller := %EvidenceScroller
+@onready var evidence_toggle := %EvidenceToggle
 
-@onready var notes_scroller := $NotesScroller
-@onready var notes_toggle := $NotesToggle
+@onready var notes_scroller := %NotesScroller
+@onready var notes_toggle := %NotesToggle
 
 var current_selected_evidence = -1
 
 var evidence_list = []
 var notes_list = []
-
-
-func _ready():
-	for dict in evidence_list:
-		evidence_scroller.add_evidence(dict)
-	for dict in notes_list:
-		notes_scroller.add_evidence(dict)
-
 
 func deselect_all():
 	evidence_scroller.deselect()
@@ -32,7 +23,24 @@ func deselect_all():
 
 
 func _on_show_button_pressed():
-	show_evidence.emit(current_selected_evidence)
+	show_evidence.emit(current_selected_evidence, viewer.show_button.text == "Ask")
+	_on_expand_collapse_button_pressed()
+	_on_evidence_scroller_selected_evidence(-1)
+
+
+func add(evidence: Evidence, is_note=false):
+	if is_note:
+		if evidence in notes_list:
+			push_warning("Note %s already in notes list, skipping..." % [evidence.name])
+			return
+		notes_list.append(evidence)
+		notes_scroller.add_evidence(evidence)
+	else:
+		if evidence in evidence_list:
+			push_warning("Evidence '%s' already in evidence list, skipping..." % [evidence.name])
+			return
+		evidence_list.append(evidence)
+		evidence_scroller.add_evidence(evidence)
 
 
 #region EVIDENCE CODE
@@ -42,12 +50,30 @@ func clear_evidence():
 	evidence_scroller.clear_evidence()
 
 
-func remove_evidence(evidence_name):
+func remove_evidence_index(index):
+	var evidence = evidence_list[index]
+	if not evidence:
+		return
+	erase_evidence(evidence)
+
+
+func remove_evidence_name(evidence_name):
 	var evidence = find_name(evidence_name)
 	if not evidence:
 		return
-	evidence_list -= [evidence]
-	evidence_scroller.remove_evidence(evidence)
+	erase_evidence(evidence)
+
+
+func erase_evidence(evidence):
+	deselect_all()
+	evidence_list.erase(evidence)
+	evidence_scroller.remove_evidence(evidence.name)
+
+
+func erase_note(note):
+	deselect_all()
+	notes_list.erase(note)
+	notes_scroller.remove_evidence(note.name)
 
 
 func find_name(evidence_name):
@@ -56,6 +82,7 @@ func find_name(evidence_name):
 			return evi
 
 
+# TODO: deprecate
 func add_evidence(_name, _desc, _icon):
 	if _icon is String:
 		_icon = load(_icon)
@@ -82,12 +109,12 @@ func _on_evidence_scroller_selected_evidence(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_evidence(evidence_list[index])
+		viewer.set_data(evidence_list[index])
 
 
 func _on_evidence_toggled(toggled_on):
-	notes_toggle.set_pressed_no_signal(false)
-	notes_scroller.set_visible(false)
+	notes_toggle.set_pressed_no_signal(not toggled_on)
+	notes_scroller.set_visible(not toggled_on)
 	evidence_toggle.set_pressed_no_signal(toggled_on)
 	evidence_scroller.set_visible(toggled_on)
 	deselect_all()
@@ -116,6 +143,7 @@ func find_note_name(note_name):
 			return evi
 
 
+# TODO: deprecate
 func add_note(_name, _desc, _icon):
 	if _icon is String:
 		_icon = load(_icon)
@@ -142,7 +170,7 @@ func _on_note_scroller_selected_note(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_note(notes_list[index])
+		viewer.set_data(notes_list[index])
 
 
 func _on_notes_scroller_selected(index):
@@ -150,14 +178,23 @@ func _on_notes_scroller_selected(index):
 	gray_out.set_visible(index > -1)
 	current_selected_evidence = index
 	if index > -1:
-		viewer_box.set_evidence(notes_list[index])
+		viewer.set_data(notes_list[index])
 
 
 func _on_notes_toggled(toggled_on):
-	evidence_toggle.set_pressed_no_signal(false)
-	evidence_scroller.set_visible(false)
+	notes_toggle.set_pressed_no_signal(toggled_on)
 	notes_scroller.set_visible(toggled_on)
+	evidence_toggle.set_pressed_no_signal(not toggled_on)
+	evidence_scroller.set_visible(not toggled_on)
 	deselect_all()
 
 #endregion
 
+
+
+func _on_expand_collapse_button_pressed():
+	deselect_all()
+	viewer.set_visible(false)
+	var shown = not %EvidencePullout.visible
+	%EvidencePullout.set_visible(shown)
+	%ExpandCollapseButton.set_text("⬆💼⬆" if shown else "⬇💼⬇")

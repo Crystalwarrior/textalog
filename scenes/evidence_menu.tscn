@@ -1,13 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://3jjcuk3xs3ad"]
+[gd_scene load_steps=5 format=3 uid="uid://3jjcuk3xs3ad"]
 
-[ext_resource type="Script" path="res://addons/textalog/scripts/EvidenceBox.gd" id="1_eg3r0"]
 [ext_resource type="PackedScene" uid="uid://dr1qnak8qv6r8" path="res://addons/textalog/scenes/evidence_scroll.tscn" id="1_rqq8k"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/evidence_menu.gd" id="1_s4bv1"]
-[ext_resource type="Texture2D" uid="uid://chh77oerj3v34" path="res://addons/textalog/ui/bg.png" id="3_tdoyj"]
+[ext_resource type="PackedScene" uid="uid://blcnrwa257bbd" path="res://addons/textalog/scenes/evidence_viewer.tscn" id="2_jejiv"]
 [ext_resource type="StyleBox" uid="uid://burvd5k2ibmo7" path="res://addons/textalog/ui/note_scroller.tres" id="5_yr3kd"]
-
-[sub_resource type="Theme" id="Theme_5p707"]
-default_font_size = 32
 
 [node name="EvidenceMenu" type="Control"]
 layout_mode = 3
@@ -20,6 +16,7 @@ mouse_filter = 1
 script = ExtResource("1_s4bv1")
 
 [node name="GrayOut" type="ColorRect" parent="."]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -29,128 +26,81 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.501961, 0.501961, 0.501961, 0.247059)
 
-[node name="EvidenceViewer" type="Control" parent="."]
+[node name="EvidenceViewer" parent="." instance=ExtResource("2_jejiv")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
-[node name="ShowButton" type="Button" parent="EvidenceViewer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -68.0
-offset_top = 128.5
-offset_right = 68.0
-offset_bottom = 181.5
+offset_left = -800.0
+offset_right = 800.0
+offset_bottom = 231.0
 grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_font_sizes/font_size = 32
-text = "Show!"
+mouse_filter = 2
 
-[node name="EvidenceBox" type="PanelContainer" parent="EvidenceViewer"]
+[node name="EvidencePullout" type="Control" parent="VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 193)
+layout_mode = 2
+
+[node name="EvidenceScroller" parent="VBoxContainer/EvidencePullout" instance=ExtResource("1_rqq8k")]
+unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -499.5
-offset_top = -159.0
-offset_right = 499.5
-offset_bottom = 127.0
-grow_horizontal = 2
-grow_vertical = 2
-theme = SubResource("Theme_5p707")
-script = ExtResource("1_eg3r0")
-metadata/_edit_group_ = true
+offset_left = -615.0
+offset_right = 615.0
 
-[node name="MarginContainer" type="MarginContainer" parent="EvidenceViewer/EvidenceBox"]
-layout_mode = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
-
-[node name="HBoxContainer" type="HBoxContainer" parent="EvidenceViewer/EvidenceBox/MarginContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="VBoxContainer" type="VBoxContainer" parent="EvidenceViewer/EvidenceBox/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="Label" type="Label" parent="EvidenceViewer/EvidenceBox/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-theme_override_font_sizes/font_size = 48
-text = "Lorem Ipsum Dolor The Sequel"
-
-[node name="MarginContainer" type="MarginContainer" parent="EvidenceViewer/EvidenceBox/MarginContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/margin_left = 16
-
-[node name="RichTextLabel" type="RichTextLabel" parent="EvidenceViewer/EvidenceBox/MarginContainer/HBoxContainer/VBoxContainer/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-bbcode_enabled = true
-text = "The first Lorem Ipsum Dolor sucked"
-
-[node name="Icon" type="TextureRect" parent="EvidenceViewer/EvidenceBox/MarginContainer/HBoxContainer"]
-layout_mode = 2
-texture = ExtResource("3_tdoyj")
-expand_mode = 2
-stretch_mode = 4
-
-[node name="EvidenceScroller" parent="." instance=ExtResource("1_rqq8k")]
+[node name="NotesScroller" parent="VBoxContainer/EvidencePullout" instance=ExtResource("1_rqq8k")]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
-
-[node name="NotesScroller" parent="." instance=ExtResource("1_rqq8k")]
-visible = false
-layout_mode = 1
+offset_left = -615.0
+offset_right = 615.0
 theme_override_styles/panel = ExtResource("5_yr3kd")
 
-[node name="EvidenceToggle" type="Button" parent="."]
+[node name="EvidenceToggle" type="Button" parent="VBoxContainer/EvidencePullout"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -639.0
+offset_left = -800.0
 offset_top = 1.0
-offset_right = -463.0
+offset_right = -624.0
 offset_bottom = 192.0
 theme_override_constants/outline_size = 0
 theme_override_font_sizes/font_size = 38
 toggle_mode = true
 text = "Evidence"
 
-[node name="NotesToggle" type="Button" parent="."]
+[node name="NotesToggle" type="Button" parent="VBoxContainer/EvidencePullout"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = 464.0
+offset_left = 624.0
 offset_top = 1.0
-offset_right = 640.0
+offset_right = 800.0
 offset_bottom = 192.0
 theme_override_constants/outline_size = 0
 theme_override_font_sizes/font_size = 38
 toggle_mode = true
 text = "Notes"
 
-[connection signal="pressed" from="EvidenceViewer/ShowButton" to="." method="_on_show_button_pressed"]
-[connection signal="selected_evidence" from="EvidenceScroller" to="." method="_on_evidence_scroller_selected_evidence"]
-[connection signal="selected_evidence" from="NotesScroller" to="." method="_on_notes_scroller_selected"]
-[connection signal="toggled" from="EvidenceToggle" to="." method="_on_evidence_toggled"]
-[connection signal="toggled" from="NotesToggle" to="." method="_on_notes_toggled"]
+[node name="ExpandCollapseButton" type="Button" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "⬇💼⬇"
+
+[connection signal="show_pressed" from="EvidenceViewer" to="." method="_on_show_button_pressed"]
+[connection signal="selected_evidence" from="VBoxContainer/EvidencePullout/EvidenceScroller" to="." method="_on_evidence_scroller_selected_evidence"]
+[connection signal="selected_evidence" from="VBoxContainer/EvidencePullout/NotesScroller" to="." method="_on_notes_scroller_selected"]
+[connection signal="toggled" from="VBoxContainer/EvidencePullout/EvidenceToggle" to="." method="_on_evidence_toggled"]
+[connection signal="toggled" from="VBoxContainer/EvidencePullout/NotesToggle" to="." method="_on_notes_toggled"]
+[connection signal="pressed" from="VBoxContainer/ExpandCollapseButton" to="." method="_on_expand_collapse_button_pressed"]

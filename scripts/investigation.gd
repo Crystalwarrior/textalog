@@ -21,20 +21,26 @@ func _unhandled_input(event):
 			child.outline(true)
 	elif event.is_action_released("highlight"):
 		for child in object_list.get_children():
+			if child.get_index() == current_hovered:
+				continue
 			child.outline(false)
 
 
 func on_object_hovered(obj, toggle):
+	var is_highlighting = Input.is_action_pressed("highlight")
 	var index = obj.get_index()
 	if index < current_hovered:
-		obj.outline(false)
+		if not is_highlighting:
+			obj.outline(false)
 		return
 	if toggle:
 		current_hovered = obj.get_index()
-		obj.outline(true)
+		if not is_highlighting:
+			obj.outline(true)
 	else:
 		current_hovered = -1
-		obj.outline(false)
+		if not is_highlighting:
+			obj.outline(false)
 
 
 func on_object_clicked(obj, target_timeline: CommandCollection):
@@ -42,3 +48,5 @@ func on_object_clicked(obj, target_timeline: CommandCollection):
 		return
 	obj.activate()
 	object_clicked.emit(obj, target_timeline)
+	get_window().gui_release_focus()
+	get_viewport().set_input_as_handled()

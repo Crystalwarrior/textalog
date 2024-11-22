@@ -10,7 +10,7 @@ var full_tex = preload("res://addons/textalog/ui/fullcircle.png")
 
 func set_statements(number: int):
 	for child in container.get_children():
-		child.queue_free()
+		child.free()
 	for i in range(number):
 		var indicator := TextureRect.new()
 		indicator.ignore_texture_size = true
@@ -24,5 +24,5 @@ func set_statements(number: int):
 func select_statement(idx: int):
 	for child in container.get_children():
 		child.texture = hollow_tex
-		if child.name == str(idx):
+		if child.get_index() == idx:
 			child.texture = full_tex

@@ -1,22 +1,22 @@
 @tool
 extends PanelContainer
 
-@onready var rtf_label = $MarginContainer/HBoxContainer/RichTextLabel
+@export var showname_label: RichTextLabel
 
 @export var showname: String = "":
 	get:
-		if rtf_label:
-			showname = rtf_label.text
-			return rtf_label.text
+		if showname_label:
+			showname = showname_label.text
+			return showname_label.text
 		return showname
 	set(value):
 		showname = value
-		if rtf_label:
-			rtf_label.text = value
+		if showname_label:
+			showname_label.text = value
 
 
 func _ready():
-	rtf_label.finished.connect(_on_rich_text_label_finished)
+	showname_label.finished.connect(_on_rich_text_label_finished)
 
 
 func _on_rich_text_label_finished():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://cf117tt2n5op"]
+[gd_scene load_steps=29 format=3 uid="uid://cf117tt2n5op"]
 
 [ext_resource type="Script" path="res://addons/textalog/scripts/dialog_view.gd" id="1_slus5"]
 [ext_resource type="Script" path="res://addons/textalog/scripts/CanvasModulate.gd" id="2_c7ej6"]
@@ -19,7 +19,7 @@
 
 [sub_resource type="Gradient" id="Gradient_28cra"]
 offsets = PackedFloat32Array(0, 0.497143, 1)
-colors = PackedColorArray(0.517647, 0.419608, 1, 0.501961, 0, 0, 0, 0, 0.517647, 0.419608, 1, 0.501961)
+colors = PackedColorArray(1, 1, 1, 0.501961, 0, 0, 0, 0, 1, 1, 1, 0.501961)
 
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_5cbb8"]
 gradient = SubResource("Gradient_28cra")
@@ -80,7 +80,7 @@ tracks/1/keys = {
 
 [sub_resource type="Animation" id="Animation_co4ww"]
 resource_name = "shake"
-length = 0.5
+length = 0.350005
 step = 0.05
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -101,7 +101,7 @@ tracks/1/path = NodePath("sprite:modulate")
 tracks/1/interp = 1
 tracks/1/loop_wrap = false
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.25, 0.4),
+"times": PackedFloat32Array(0, 0.25, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
@@ -112,6 +112,11 @@ _data = {
 "RESET": SubResource("Animation_t2f18"),
 "shake": SubResource("Animation_co4ww")
 }
+
+[sub_resource type="LabelSettings" id="LabelSettings_eomn3"]
+font_size = 32
+outline_size = 8
+outline_color = Color(0.125911, 0.125911, 0.125911, 1)
 
 [sub_resource type="Shader" id="Shader_gibmv"]
 code = "/* 
@@ -188,14 +193,6 @@ command_node_fallback_path = NodePath("..")
 
 [node name="HUD" type="CanvasLayer" parent="."]
 script = ExtResource("5_e63f1")
-
-[node name="CG" type="TextureRect" parent="HUD"]
-visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="noise" type="TextureRect" parent="HUD"]
 visible = false
@@ -390,8 +387,7 @@ item_2/text = "Case Summary"
 script = ExtResource("24_f1sis")
 
 [node name="interjection" type="Marker2D" parent="HUD"]
-position = Vector2(640, 360)
-scale = Vector2(0.958611, 0.958611)
+position = Vector2(960, 540)
 
 [node name="sprite" type="Sprite2D" parent="HUD/interjection"]
 
@@ -400,6 +396,15 @@ libraries = {
 "": SubResource("AnimationLibrary_ltusf")
 }
 autoplay = "shake"
+
+[node name="DebugInfoLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 353.0
+offset_bottom = 53.0
+label_settings = SubResource("LabelSettings_eomn3")
 
 [node name="Background" type="Control" parent="."]
 layout_mode = 1
@@ -425,7 +430,7 @@ texture = ExtResource("14_htxqg")
 stretch_mode = 1
 
 [node name="MainCamera" type="Camera2D" parent="."]
-position = Vector2(640, 360)
+position = Vector2(960, 540)
 script = ExtResource("26_ejp0b")
 
 [connection signal="flags_modified" from="." to="HUD/DebugStuff/FlagLabelContainer/VBoxContainer/FlagLabel" method="_on_dialog_view_flags_modified"]

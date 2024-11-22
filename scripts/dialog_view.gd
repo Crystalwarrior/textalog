@@ -1,22 +1,35 @@
 extends Node
 
-@onready var dialogbox = $HUD/MainView/DialogBox
+@onready var dialogbox = %DialogBox
 @onready var command_manager: CommandProcessor = $CommandManager
-@onready var testimony_indicator = $HUD/MainView/DialogBox/TestimonyIndicator
+@onready var testimony_indicator = dialogbox.testimony_indicator
 @onready var characters_node = $Characters
 @onready var backgrounds = $Background
 @onready var canvas_modulate = $CanvasModulate
-@onready var choice_list = $HUD/MainView/ChoiceList
+@onready var choice_list_node = $HUD/MainView/ChoiceList
+@onready var evidence_menu = $HUD/EvidenceMenu
+const SFXFOLDER = "res://sfx/"
+const MUSICFOLDER = "res://music/"
+
+const DialogCommand = preload("res://addons/textalog/commands/command_dialog.gd")
+const CharacterCommand = preload("res://addons/textalog/commands/command_character.gd")
+const EvidenceCommand = preload("res://addons/textalog/commands/command_evidence.gd")
+const MusicCommand = preload("res://addons/textalog/commands/command_music.gd")
+const BackgroundCommand = preload("res://addons/textalog/commands/command_background.gd")
+const ChoiceListCommand = preload("res://addons/textalog/commands/command_choice_list.gd")
 
 var auto = false:
 	set(val):
 		auto = val
-		$HUD/MainView/DialogBox/NextIcon.modulate = Color.YELLOW if auto else Color.WHITE
+		dialogbox.next_icon.modulate = Color.YELLOW if auto else Color.WHITE
 
 var auto_delay: float = 1.2
 
-var finished = false
-var waiting_on_input = true
+var finished: bool = false
+var waiting_on_input: bool = true
+var hide_dialog_after_input: bool = false
+
+var current_character = ""
 
 var testimony: PackedStringArray = []
 var testimony_timeline: CommandCollection
@@ -53,16 +66,14 @@ signal evidence_shown(index)
 func _process_testimony(event):
 	if event.is_action_pressed("next"):
 		get_viewport().set_input_as_handled()
-		get_window().gui_release_focus()
 		next()
 	elif event.is_action_pressed("previous"):
-		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
 		if not waiting_on_input:
 			dialogbox.skip()
 		else:
 			go_to_previous_statement()
-	elif event.is_action_pressed("press") and current_press:
+	elif event.is_action_pressed("press"):
 		get_window().gui_release_focus()
 		get_viewport().set_input_as_handled()
 		press()
@@ -86,8 +97,15 @@ func next():
 	get_window().gui_release_focus()
 	if not waiting_on_input:
 		dialogbox.skip()
-	elif not pause_testimony and not testimony.is_empty():
-		go_to_next_statement()
+		return
+	if hide_dialog_after_input:
+		dialogbox.disappear()
+
+	if (not pause_testimony or finished) and not testimony.is_empty():
+		if not pause_testimony or next_statement_on_pause:
+			go_to_next_statement()
+		else:
+			go_to_statement(current_testimony_index)
 	elif not finished:
 		if not command_manager.main_collection:
 			command_manager.start()
@@ -208,18 +226,21 @@ func go_to_statement(index: int):
 	var command_bookmark = testimony[current_testimony_index]
 	var target_command = testimony_timeline.get_command_by_bookmark(command_bookmark)
 	var command_index = testimony_timeline.get_command_absolute_position(target_command)
-	command_manager.go_to_command_in_collection(command_index, testimony_timeline)
+	command_manager.jump_to_command(command_index, testimony_timeline)
 
 
 func set_statements(statements: PackedStringArray):
 	testimony = statements
 	testimony_indicator.set_statements(testimony.size())
+	current_testimony_index = min(current_testimony_index, testimony.size()-1)
+	testimony_indicator.select_statement(current_testimony_index)
 
 
 func start_testimony(statements: PackedStringArray = []):
 	pause_testimony = false
 	current_testimony_index = 0
 	testimony_timeline = command_manager.current_collection
+	print(statements)
 	if not statements.is_empty():
 		set_statements(statements)
 	go_to_statement(current_testimony_index)
@@ -235,8 +256,11 @@ func stop_testimony():
 	testimony_indicator.set_statements(0)
 
 
-func set_press(timeline: CommandCollection = null):
-	current_press = timeline
+func set_press(timeline: String = ""):
+	if timeline == "":
+		current_press = null
+	else:
+		current_press = load(timeline)
 
 
 func set_present(timeline: String = "", allow_evidence = true, allow_notes = false):
@@ -248,21 +272,135 @@ func set_present(timeline: String = "", allow_evidence = true, allow_notes = fal
 
 
 func press():
+	if current_press == null:
+		return
+	waiting_on_input = false
+	pause_testimony = true
+	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	pause_testimony = true
-	next_statement_on_pause = true
-	command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.start(current_press)
+	command_manager.go_to_command_in_collection(0, current_press)
 
 
-func dialog(showname: String = "", text: String = "", additive: bool = false, letter_delay: float = 0.02) -> void:
+func dialog(dialog_command:DialogCommand) -> void:
+	var showname = dialog_command.showname
+	var dialog = dialog_command.dialog
+	var letter_delay = dialog_command.letter_delay
+	var blip_sound = dialog_command.blip_sound
+	var hide_dialog = dialog_command.hide_dialog
+	var HideDialog = dialog_command.HideDialog
+	var wait_until_finished = dialog_command.wait_until_finished
+	var speaking_character = dialog_command.speaking_character
+	var additive = dialog_command.additive
+
+	#TODO: use these for the characters
+	var bump_speaker = dialog_command.bump_speaker
+	var highlight_speaker = dialog_command.highlight_speaker
+
 	dialogbox.letter_delay = letter_delay
-	dialogbox.set_showname(showname)
-	if additive:
-		dialogbox.add_msg(text)
+	if blip_sound:
+		dialogbox.set_blipsound(blip_sound)
+	dialogbox.appear()
+	dialogbox.display(dialog, showname, additive)
+	
+	current_character = speaking_character
+	var chara = get_character(speaking_character)
+	if chara:
+		chara.start_talking()
+		if bump_speaker:
+			chara.bump()
+		if highlight_speaker:
+			pass
+
+	if hide_dialog == HideDialog.INSTANTLY:
+		dialogbox.disappear()
+
+	hide_dialog_after_input = hide_dialog == HideDialog.AFTER_INPUT
+
+	# Pause until dialog finishes processing
+	if wait_until_finished:
+		await dialog_finished
+	if chara:
+		chara.stop_talking()
+
+	if hide_dialog == HideDialog.AT_END:
+		dialogbox.disappear()
+
+	current_character = ""
+	# If we wait until finished, remember tell the timeline to continue
+	if wait_until_finished:
+		dialog_command.go_to_next_command()
+
+
+func character(character_command:CharacterCommand) -> void:
+	var character: PackedScene = character_command.character
+	var character_name: String = character_command.character_name
+	var emote: String = character_command.emote
+	var delete: bool = character_command.delete
+	var add_position: bool = character_command.add_position
+	var to_position: Vector2 = character_command.to_position
+	var zoom_duration: float = character_command.zoom_duration
+	var flipped: bool = character_command.flipped
+	var bounce: bool = character_command.bounce
+	var flip_duration: float = character_command.flip_duration
+	var shaking:bool = character_command.shaking
+	var set_z_index:int = character_command.set_z_index
+	var wait_until_finished:bool = character_command.wait_until_finished
+	var fade_out:bool = character_command.fade_out
+	var fade_duration: float = character_command.fade_duration
+
+	if character_name == "":
+		character_name = character.resource_path.get_file().trim_suffix("." + character.resource_path.get_extension())
+
+	var target = get_character(character_name)
+	if not target:
+		target = add_character(character, to_position, flipped)
+
+	if emote != "":
+		target.set_emote(emote)
+	if shaking:
+		target.start_shaking()
 	else:
-		dialogbox.set_msg(text)
+		target.stop_shaking()
+	if fade_out:
+		target.fadeout(fade_duration)
+	else:
+		target.fadein(fade_duration)
+	target.z_index = set_z_index
+	target.flip_h(flipped, flip_duration)
+	target.move_to(to_position, Vector2(1, 1), zoom_duration, add_position)
+	if bounce:
+		target.bounce()
+	# If we wait until finished, remember tell the timeline to continue
+	if wait_until_finished:
+		if target.waiting_on_animations > 0:
+			await target.animation_finished
+		character_command.go_to_next_command()
+	if delete:
+		remove_character(character_name)
+
+
+func choice_list(choice_list_command:ChoiceListCommand) -> void:
+	var choices = choice_list_command.collection
+	for choice in choices:
+		add_choice(choice.text, not choice._condition_is_true(choice_list_command.target_node))
+
+
+func evidence(evidence_command:EvidenceCommand) -> void:
+	# TODO: have a game data object that tracks evidence, don't let the UI keep track.
+	match evidence_command.do_what:
+		EvidenceCommand.Action.ADD_EVIDENCE:
+			evidence_menu.add(evidence_command.evidence, evidence_command.evidence.is_note)
+		EvidenceCommand.Action.ERASE_EVIDENCE:
+			if evidence_command.evidence.is_note:
+				evidence_menu.erase_note(evidence_command.evidence)
+			else:
+				evidence_menu.erase_evidence(evidence_command.evidence)
+		EvidenceCommand.Action.INSERT_AT_INDEX:
+			push_error("Not implemented!")
+			#evidence_menu.evidence_list.insert(evidence_command.at_index, evidence_command.evidence)
+		EvidenceCommand.Action.REMOVE_AT_INDEX:
+			evidence_menu.remove_evidence_index(evidence_command.at_index)
 
 
 func set_flag(flag: String, val: Variant):
@@ -277,24 +415,44 @@ func get_flag(flag: String):
 
 
 func add_choice(title, disabled = false):
-	var choice = choice_list.add_choice(title, disabled)
+	var choice = choice_list_node.add_choice(title, disabled)
 	if choice.text in choice_history:
 		choice.modulate = Color(0.65, 0.65, 0.85)
 
 
 func clear_choices():
-	choice_list.clear_choices()
+	choice_list_node.clear_choices()
 
 
 func get_savedict() -> Dictionary:
 	var save_dict = {
-		"timeline": command_manager.current_collection.get_path(),
-		"current_command_idx": command_manager.current_command_idx,
+		"main_collection": command_manager.main_collection.resource_path,
+		"current_collection": command_manager.current_collection.resource_path,
+		"current_command_idx": command_manager.current_command_position,
 		"flags": flags,
-		"history": command_manager._history,
-		"jump_history": command_manager._jump_history,
 		"background": current_background,
+		"history": [],
+		"jump_history": [],
 	}
+
+	# Process the history so it's saved not as object, but as paths
+	var history = []
+	for value in command_manager._history:
+		var new_value = value.duplicate()
+		new_value[command_manager._HistoryData.COLLECTION] = new_value[command_manager._HistoryData.COLLECTION].resource_path
+		print(new_value)
+		history.append(new_value)
+	save_dict["history"] = history
+	
+	# Process the jump history so it's saved not as object, but as paths
+	var jump_history = []
+	for value in command_manager._jump_history:
+		var new_value = value.duplicate()
+		new_value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION] = new_value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION].resource_path
+		new_value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION] = new_value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION].resource_path
+		jump_history.append(new_value)
+	save_dict["jump_history"] = jump_history
+
 	return save_dict
 
 
@@ -302,19 +460,30 @@ func load_savedict(save_dict: Dictionary):
 	if command_manager.current_command:
 		command_manager._disconnect_command_signals(command_manager.current_command)
 	for key in save_dict.keys():
-		if key == "timeline":
+		if key == "main_collection":
+			command_manager.main_collection = load(save_dict[key])
+		if key == "current_collection":
 			command_manager.current_collection = load(save_dict[key])
 		if key == "current_command_idx":
-			command_manager.current_command_idx = save_dict[key]
+			command_manager.current_command_position = save_dict[key]
 		if key == "flags":
 			flags = save_dict[key]
 		if key == "history":
-			command_manager._history = save_dict[key]
+			var history = []
+			for value in save_dict[key]:
+				value[command_manager._HistoryData.COLLECTION] = load(value[command_manager._HistoryData.COLLECTION])
+				history.append(value)
+			command_manager._history = history
 		if key == "jump_history":
-			command_manager._jump_history = save_dict[key]
+			var jump_history = []
+			for value in save_dict[key]:
+				value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION] = load(value[command_manager._JumpHistoryData.FROM][command_manager._HistoryData.COLLECTION])
+				value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION] = load(value[command_manager._JumpHistoryData.TO][command_manager._HistoryData.COLLECTION])
+				jump_history.append(value)
+			command_manager._jump_history = jump_history
 		if key == "background":
 			set_background(save_dict[key])
-	command_manager.start(null, command_manager.current_command_idx)
+	command_manager.go_to_command(command_manager.current_command_position)
 
 
 func evidence_exists(evidence_name: String):
@@ -339,6 +508,13 @@ func get_note_name(index: int = -1):
 	if index < notes_list.size():
 		note_name = notes_list[index]["name"]
 	return note_name
+
+
+func has_evidence(by_name):
+	return evidence_menu.find_name(by_name) != null
+
+func has_note(by_name):
+	return evidence_menu.find_note_name(by_name) != null
 
 
 func _character_stop_talking(speaker):
@@ -381,24 +557,29 @@ func _on_dialog_box_message_end():
 	dialog_finished.emit()
 
 
-func _on_show_evidence(index):
+func _on_show_evidence(index, is_note=false):
+	if not is_note and current_present == null:
+		return
+	if is_note and current_press == null:
+		return
+
+	waiting_on_input = false
 	pause_testimony = true
 	next_statement_on_pause = false
 	dialogbox.process_charcters = false
 	dialog_finished.emit()
-	$HUD/EvidenceMenu/EvidenceToggle.button_pressed = false
-
 	last_shown_evidence = index
 	evidence_shown.emit(index)
 
-	if current_present == null:
-		return
 	#command_manager._disconnect_command_signals(command_manager.current_command)
-	command_manager.jump_to_command(0, current_present)
+	if is_note:
+		command_manager.go_to_command_in_collection(0, current_press)
+	else:
+		command_manager.go_to_command_in_collection(0, current_present)
 
 
-func _on_evidence_menu_show_evidence(index):
-	_on_show_evidence(index)
+func _on_evidence_menu_show_evidence(index, is_note=false):
+	_on_show_evidence(index, is_note)
 
 
 func _on_object_clicked(obj, target_timeline: CommandCollection):
@@ -416,6 +597,9 @@ func _on_object_clicked(obj, target_timeline: CommandCollection):
 
 
 func _on_choice_list_choice_selected(index):
-	choice_history.append(choice_list.get_choice_by_index(index).text)
+	choice_history.append(choice_list_node.get_choice_by_index(index).text)
 	choice_selected.emit(index)
 	last_picked_choice = index
+	var choice_list_command: ChoiceListCommand = command_manager.current_command
+	choice_list_command.choice_selected(index)
+	clear_choices()

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dbhw37x2r56mm"]
 
 [ext_resource type="Script" path="res://addons/textalog/scripts/ChoiceList.gd" id="1_lm2u1"]
-[ext_resource type="Theme" uid="uid://g5rpkpjq6c81" path="res://addons/textalog/choices_theme.tres" id="2_skoxo"]
+[ext_resource type="Theme" uid="uid://g5rpkpjq6c81" path="res://ui/choices_theme.tres" id="2_skoxo"]
 
 [sub_resource type="Animation" id="Animation_ajusi"]
 resource_name = "fade"

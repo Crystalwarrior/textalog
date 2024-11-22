@@ -1,7 +1,7 @@
 [gd_scene load_steps=20 format=3 uid="uid://ctilnyafp01uw"]
 
 [ext_resource type="Script" path="res://addons/textalog/commands/dialog/dialog_editor.gd" id="1_jdxpf"]
-[ext_resource type="PackedScene" uid="uid://drtv4tdo7e08i" path="res://addons/textalog/scenes/dialog_box.tscn" id="2_qc1nv"]
+[ext_resource type="PackedScene" uid="uid://drtv4tdo7e08i" path="res://addons/textalog/scenes/dialog_box.tscn" id="2_cojhd"]
 [ext_resource type="Texture2D" uid="uid://bnaun6p5vttqr" path="res://addons/textalog/commands/icons/bold.svg" id="3_sscjh"]
 [ext_resource type="Texture2D" uid="uid://dtyuq2rh62ef0" path="res://addons/textalog/commands/icons/italic.svg" id="4_mdvss"]
 [ext_resource type="Texture2D" uid="uid://c7n2wpa6lq2vk" path="res://addons/textalog/commands/icons/underline.svg" id="5_u3vta"]
@@ -18,15 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://cverj5su8dwjw" path="res://addons/textalog/commands/icons/bucket.svg" id="13_uli47"]
 [ext_resource type="Texture2D" uid="uid://1n2qab0bsww4" path="res://addons/textalog/commands/icons/fade.svg" id="14_nm1y5"]
 [ext_resource type="Texture2D" uid="uid://c71514cgg6mqs" path="res://addons/textalog/commands/icons/rainbow.svg" id="15_dxa0j"]
-
-[sub_resource type="CodeHighlighter" id="CodeHighlighter_lcghf"]
-number_color = Color(0.878431, 0.878431, 0.878431, 1)
-symbol_color = Color(0.878431, 0.878431, 0.878431, 1)
-function_color = Color(0.878431, 0.878431, 0.878431, 1)
-member_variable_color = Color(0.878431, 0.878431, 0.878431, 1)
-color_regions = {
-"[ ]": Color(0.556863, 0.827451, 0.643137, 1)
-}
+[ext_resource type="CodeHighlighter" uid="uid://dk1l8aw0ts77l" path="res://addons/textalog/commands/dialog/dialog_highlighter.tres" id="20_v2xey"]
 
 [node name="dialog_editor" type="Control"]
 layout_mode = 3
@@ -38,176 +30,234 @@ grow_vertical = 2
 script = ExtResource("1_jdxpf")
 metadata/_edit_use_anchors_ = true
 
-[node name="DialogBar" type="HFlowContainer" parent="."]
-layout_mode = 2
-offset_right = 1280.0
-offset_bottom = 31.0
-
-[node name="PlayButton" type="Button" parent="DialogBar"]
-layout_mode = 2
-text = "Play Message"
-
-[node name="DialogBox" parent="." instance=ExtResource("2_qc1nv")]
-layout_mode = 2
-anchors_preset = 0
-anchor_top = 0.0432222
-anchor_bottom = 0.372222
-offset_top = -0.119995
-offset_bottom = 0.000640869
-grow_vertical = 0
-
-[node name="Showname" parent="DialogBox" index="1"]
-offset_right = 357.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.372222
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-metadata/_edit_use_anchors_ = true
-metadata/_edit_group_ = true
-
-[node name="ButtonBar" type="HFlowContainer" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="Bold" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Bold"
-theme_override_constants/icon_max_width = 0
-icon = ExtResource("3_sscjh")
-
-[node name="Italics" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Italics"
-icon = ExtResource("4_mdvss")
-
-[node name="Underline" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Underline"
-icon = ExtResource("5_u3vta")
-
-[node name="Strikethrough" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Strikethrough"
-icon = ExtResource("6_240wf")
-
-[node name="VSeparator" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-
-[node name="Left" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Left"
-icon = ExtResource("7_aob6y")
-
-[node name="Center" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Center"
-icon = ExtResource("8_vtvpy")
-
-[node name="Right" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Right"
-icon = ExtResource("9_3oylr")
-
-[node name="Fill" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Fill"
-icon = ExtResource("10_u4f8d")
-
-[node name="VSeparator6" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-
-[node name="Wave" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Wave"
-icon = ExtResource("11_drj4w")
-
-[node name="Tornado" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Tornado"
-icon = ExtResource("12_8a8ll")
-
-[node name="Shake" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Shake"
-icon = ExtResource("13_mvwrk")
-
-[node name="Fade" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Fade"
-icon = ExtResource("14_nm1y5")
-
-[node name="Rainbow" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Rainbow"
-icon = ExtResource("15_dxa0j")
-
-[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-
-[node name="color" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Text Color"
-icon = ExtResource("11_4ugyi")
-
-[node name="bgcolor" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Background Color"
-icon = ExtResource("12_nns4w")
-
-[node name="fgcolor" type="Button" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-tooltip_text = "Foreground Color"
-icon = ExtResource("13_uli47")
-
-[node name="VSeparator5" type="VSeparator" parent="VBoxContainer/ButtonBar"]
-layout_mode = 2
-
-[node name="TextEdit" type="TextEdit" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-placeholder_text = "Type your dialog here!"
-deselect_on_focus_loss_enabled = false
-wrap_mode = 1
-syntax_highlighter = SubResource("CodeHighlighter_lcghf")
-metadata/_edit_use_anchors_ = true
-
 [node name="ColorPickerDialog" type="ConfirmationDialog" parent="."]
+unique_name_in_owner = true
 title = "Pick a color"
 initial_position = 1
 size = Vector2i(306, 625)
 
 [node name="ColorPicker" type="ColorPicker" parent="ColorPickerDialog"]
+unique_name_in_owner = true
 offset_left = 32.0
 offset_top = 20.0
 offset_right = 310.0
 offset_bottom = 588.0
 
-[connection signal="pressed" from="DialogBar/PlayButton" to="." method="_on_play_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Bold" to="." method="insert_tag" binds= ["b"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Italics" to="." method="insert_tag" binds= ["i"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Underline" to="." method="insert_tag" binds= ["u"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Strikethrough" to="." method="insert_tag" binds= ["s"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Left" to="." method="insert_tag" binds= ["left"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Center" to="." method="insert_tag" binds= ["center"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Right" to="." method="insert_tag" binds= ["right"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Fill" to="." method="insert_tag" binds= ["fill"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Wave" to="." method="insert_tag" binds= ["wave"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Tornado" to="." method="insert_tag" binds= ["tornado"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Shake" to="." method="insert_tag" binds= ["shake"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Fade" to="." method="insert_tag" binds= ["fade", {
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DialogBar" type="HFlowContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="ScrollContainer/VBoxContainer/DialogBar"]
+layout_mode = 2
+text = "Play Message"
+
+[node name="DialogBox" parent="ScrollContainer/VBoxContainer" instance=ExtResource("2_cojhd")]
+unique_name_in_owner = true
+texture_filter = 1
+custom_minimum_size = Vector2(1280, 235)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+metadata/_edit_group_ = true
+
+[node name="ButtonBar" type="HFlowContainer" parent="ScrollContainer/VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BbcodeLabel" type="Label" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+text = "BBCode:"
+
+[node name="Bold" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Bold"
+theme_override_constants/icon_max_width = 0
+icon = ExtResource("3_sscjh")
+
+[node name="Italics" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Italics"
+icon = ExtResource("4_mdvss")
+
+[node name="Underline" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Underline"
+icon = ExtResource("5_u3vta")
+
+[node name="Strikethrough" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Strikethrough"
+icon = ExtResource("6_240wf")
+
+[node name="VSeparator" type="VSeparator" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+
+[node name="Left" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Left"
+icon = ExtResource("7_aob6y")
+
+[node name="Center" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Center"
+icon = ExtResource("8_vtvpy")
+
+[node name="Right" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Right"
+icon = ExtResource("9_3oylr")
+
+[node name="Fill" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Fill"
+icon = ExtResource("10_u4f8d")
+
+[node name="VSeparator6" type="VSeparator" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+
+[node name="Wave" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Wave"
+icon = ExtResource("11_drj4w")
+
+[node name="Tornado" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Tornado"
+icon = ExtResource("12_8a8ll")
+
+[node name="Shake" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Shake"
+icon = ExtResource("13_mvwrk")
+
+[node name="Fade" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Fade"
+icon = ExtResource("14_nm1y5")
+
+[node name="Rainbow" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Rainbow"
+icon = ExtResource("15_dxa0j")
+
+[node name="VSeparator2" type="VSeparator" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+
+[node name="color" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Text Color"
+icon = ExtResource("11_4ugyi")
+
+[node name="bgcolor" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Background Color"
+icon = ExtResource("12_nns4w")
+
+[node name="fgcolor" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Foreground Color"
+icon = ExtResource("13_uli47")
+
+[node name="VSeparator5" type="VSeparator" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+
+[node name="TxtCmdLbl" type="Label" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+text = "Text Commands:"
+
+[node name="spd_button" type="OptionButton" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 7
+selected = 0
+allow_reselect = true
+popup/item_0/text = "normal"
+popup/item_0/id = 0
+popup/item_1/text = "slow"
+popup/item_1/id = 1
+popup/item_2/text = "typewriter"
+popup/item_2/id = 2
+popup/item_3/text = "fast"
+popup/item_3/id = 3
+popup/item_4/text = "rapid"
+popup/item_4/id = 4
+popup/item_5/text = "instant"
+popup/item_5/id = 5
+popup/item_6/text = "custom"
+popup/item_6/id = 6
+
+[node name="shake" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Foreground Color"
+text = "shake"
+
+[node name="flash" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Foreground Color"
+text = "flash"
+
+[node name="pause" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Foreground Color"
+text = "pause"
+
+[node name="blip" type="Button" parent="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar"]
+layout_mode = 2
+tooltip_text = "Foreground Color"
+text = "blip"
+
+[node name="TextEdit" type="TextEdit" parent="ScrollContainer/VBoxContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+placeholder_text = "Type your dialog here!"
+deselect_on_focus_loss_enabled = false
+wrap_mode = 1
+syntax_highlighter = ExtResource("20_v2xey")
+metadata/_edit_use_anchors_ = true
+
+[connection signal="canceled" from="ColorPickerDialog" to="." method="_on_color_picker_dialog_canceled"]
+[connection signal="confirmed" from="ColorPickerDialog" to="." method="_on_color_picker_dialog_confirmed"]
+[connection signal="preset_added" from="ColorPickerDialog/ColorPicker" to="." method="_on_color_picker_preset_added"]
+[connection signal="preset_removed" from="ColorPickerDialog/ColorPicker" to="." method="_on_color_picker_preset_removed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/DialogBar/PlayButton" to="." method="_on_play_button_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Bold" to="." method="insert_tag" binds= ["b"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Italics" to="." method="insert_tag" binds= ["i"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Underline" to="." method="insert_tag" binds= ["u"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Strikethrough" to="." method="insert_tag" binds= ["s"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Left" to="." method="insert_tag" binds= ["left"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Center" to="." method="insert_tag" binds= ["center"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Right" to="." method="insert_tag" binds= ["right"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Fill" to="." method="insert_tag" binds= ["fill"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Wave" to="." method="insert_tag" binds= ["wave"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Tornado" to="." method="insert_tag" binds= ["tornado"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Shake" to="." method="insert_tag" binds= ["shake"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Fade" to="." method="insert_tag" binds= ["fade", {
 "length": "99",
 "start": "1"
 }]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/Rainbow" to="." method="insert_tag" binds= ["rainbow"]]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/color" to="." method="_on_text_color_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/bgcolor" to="." method="_on_background_color_pressed"]
-[connection signal="pressed" from="VBoxContainer/ButtonBar/fgcolor" to="." method="_on_foreground_color_pressed"]
-[connection signal="text_changed" from="VBoxContainer/TextEdit" to="." method="_on_text_edit_text_changed"]
-[connection signal="canceled" from="ColorPickerDialog" to="." method="_on_color_picker_dialog_canceled"]
-[connection signal="confirmed" from="ColorPickerDialog" to="." method="_on_color_picker_dialog_confirmed"]
-
-[editable path="DialogBox"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/Rainbow" to="." method="insert_tag" binds= ["rainbow"]]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/color" to="." method="_on_text_color_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/bgcolor" to="." method="_on_background_color_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/fgcolor" to="." method="_on_foreground_color_pressed"]
+[connection signal="item_selected" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/spd_button" to="." method="_on_option_button_item_selected"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/shake" to="." method="_on_shake_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/flash" to="." method="_on_flash_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/pause" to="." method="_on_pause_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/VBoxContainer/ButtonBar/blip" to="." method="_on_blip_pressed"]
+[connection signal="text_changed" from="ScrollContainer/VBoxContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_text_changed"]
